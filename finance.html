@@ -12,16 +12,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared.css">
+<script src="/school.config.js"></script>
+<script>(function(c){document.documentElement.style.setProperty('--green',c.color);var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=c.color;var a=document.querySelector('meta[name="apple-mobile-web-app-title"]');if(a)a.content=c.appName;})(SCHOOL_CONFIG);</script>
 <style>
 .tab-bar{display:flex;border-bottom:2px solid var(--border);margin-bottom:20px}
 .tab{padding:10px 20px;font-size:.84rem;font-weight:600;color:var(--carbon-soft);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .13s}
 .tab.active{color:var(--green);border-bottom-color:var(--green)}
 .receipt-box{background:#fff;padding:24px;font-family:'Outfit',sans-serif;max-width:400px;margin:0 auto}
-.receipt-title{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:#1a6b3c;text-align:center;margin-bottom:4px}
+.receipt-title{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:var(--green);text-align:center;margin-bottom:4px}
 .receipt-sub{font-size:.74rem;color:#888;text-align:center;margin-bottom:16px}
 .receipt-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ede4;font-size:.82rem}
 .receipt-row:last-child{border-bottom:none}
-.receipt-total{display:flex;justify-content:space-between;padding:10px 0;font-size:.95rem;font-weight:700;border-top:2px solid #1a6b3c;margin-top:8px}
+.receipt-total{display:flex;justify-content:space-between;padding:10px 0;font-size:.95rem;font-weight:700;border-top:2px solid var(--green);margin-top:8px}
 @media print{#sidebar,#topbar,.tab-bar,.card:not(.receipt-print),button,.btn{display:none!important}.receipt-box{border:none!important;box-shadow:none!important}}
 </style>
 </head>
@@ -285,7 +287,7 @@ function showReceipt(payId){
       <div class="receipt-sub">${SCHOOL.city} · ${SCHOOL.phone}<br>Official Fee Receipt</div>
       <div style="border:1px dashed var(--border-med);border-radius:8px;padding:12px;margin-bottom:12px">
         ${rr('Receipt No','REC-'+payId.slice(-6).toUpperCase())}${rr('Date',now.toLocaleDateString('en-GH',{day:'numeric',month:'long',year:'numeric'}))}${rr('Student',p.studentName)}${rr('Class',getClassLabel(p.classKey))}${rr('Term',p.term+' · '+p.year)}${rr('Method',p.method)}${p.reference?rr('Reference',p.reference):''}
-        <div class="receipt-total"><span>Amount Paid</span><span style="color:#1a6b3c">${fmtGHS(p.amount)}</span></div>
+        <div class="receipt-total"><span>Amount Paid</span><span style="color:var(--green)">${fmtGHS(p.amount)}</span></div>
       </div>
       <div style="text-align:center;font-size:.72rem;color:#aaa">Thank you for your payment · ${SCHOOL.name}</div>
     </div>`;

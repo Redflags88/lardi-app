@@ -12,6 +12,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared.css">
+<script src="/school.config.js"></script>
+<script>(function(c){document.documentElement.style.setProperty('--green',c.color);var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=c.color;var a=document.querySelector('meta[name="apple-mobile-web-app-title"]');if(a)a.content=c.appName;})(SCHOOL_CONFIG);</script>
 <style>
 .reset-wrap{max-width:540px;margin:0 auto}
 .log{background:#0a2e1a;border-radius:12px;padding:16px;font-family:monospace;font-size:.78rem;color:#7ee8a2;line-height:2;max-height:300px;overflow-y:auto;margin-top:16px;white-space:pre-wrap;display:none}
@@ -488,7 +490,7 @@ async function doReset() {
     log('   Announcements: 5');
 
     btn.textContent       = '✅ Done — Go Pitch!';
-    btn.style.background  = '#1a6b3c';
+    btn.style.background  = SCHOOL_CONFIG.color;
     btn.disabled          = false;
 
   } catch (err) {

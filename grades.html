@@ -12,22 +12,24 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared.css">
+<script src="/school.config.js"></script>
+<script>(function(c){document.documentElement.style.setProperty('--green',c.color);var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=c.color;var a=document.querySelector('meta[name="apple-mobile-web-app-title"]');if(a)a.content=c.appName;})(SCHOOL_CONFIG);</script>
 <style>
 .grade-table input[type=number]{width:60px;padding:5px 7px;border:1.5px solid var(--border-med);border-radius:var(--r-sm);font-family:var(--font-b);font-size:.84rem;text-align:center;outline:none;transition:border-color .13s}
 .grade-table input[type=number]:focus{border-color:var(--green)}
 .grade-cell-badge{display:inline-flex;align-items:center;justify-content:center;width:36px;height:24px;border-radius:4px;font-size:.7rem;font-weight:700}
 .report-card{background:#fff;padding:32px;max-width:680px;margin:0 auto;font-family:'Outfit',sans-serif}
-.rc-header{display:flex;align-items:center;gap:16px;padding-bottom:16px;border-bottom:3px solid #1a6b3c;margin-bottom:20px}
+.rc-header{display:flex;align-items:center;gap:16px;padding-bottom:16px;border-bottom:3px solid var(--green);margin-bottom:20px}
 .rc-school{flex:1}
-.rc-school-name{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:#1a6b3c}
+.rc-school-name{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:var(--green)}
 .rc-info{background:#f0ede4;border-radius:10px;padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px}
 .rc-info-item{font-size:.8rem;color:#444}
 .rc-info-item strong{color:#1c1c1c}
 .rc-subject-table{width:100%;border-collapse:collapse;font-size:.83rem;margin-bottom:16px}
-.rc-subject-table th{background:#1a6b3c;color:#fff;padding:8px 10px;text-align:left;font-weight:600;font-size:.73rem}
+.rc-subject-table th{background:var(--green);color:#fff;padding:8px 10px;text-align:left;font-weight:600;font-size:.73rem}
 .rc-subject-table td{padding:8px 10px;border-bottom:1px solid #eee}
 .rc-subject-table tr:nth-child(even) td{background:#faf7f2}
-.rc-footer{display:flex;justify-content:space-between;margin-top:24px;padding-top:16px;border-top:2px solid #1a6b3c}
+.rc-footer{display:flex;justify-content:space-between;margin-top:24px;padding-top:16px;border-top:2px solid var(--green)}
 .rc-sign{text-align:center;width:45%}
 .rc-sign-line{border-top:1px solid #aaa;padding-top:6px;font-size:.76rem;color:#888;margin-top:24px}
 @media print{body{background:#fff!important}.card,.modal-overlay,#sidebar,#topbar,.btn,#ctrl-bar{display:none!important}.report-card{padding:16px;page-break-after:always}}
@@ -266,7 +268,7 @@ function buildReportCard(s,grades,attRate,attDays,avg,grObj){
       </div>
       <div style="text-align:right">
         <div style="font-size:.72rem;color:#888;font-weight:600;letter-spacing:1px;text-transform:uppercase">Student Report Card</div>
-        <div style="font-size:.8rem;color:#1a6b3c;font-weight:600;margin-top:2px">${CUR_TERM} · ${SCHOOL.year}</div>
+        <div style="font-size:.8rem;color:var(--green);font-weight:600;margin-top:2px">${CUR_TERM} · ${SCHOOL.year}</div>
       </div>
     </div>
     <div class="rc-info">
@@ -279,7 +281,7 @@ function buildReportCard(s,grades,attRate,attDays,avg,grObj){
       <thead><tr><th>Subject</th><th style="text-align:center">Score</th><th style="text-align:center">Grade</th><th>Remark</th></tr></thead>
       <tbody>
         ${grades.map(g=>`<tr><td>${getSubjectLabel(g.subjectKey)}</td><td style="text-align:center;font-weight:700;color:${getGrade(g.score).color}">${g.score}%</td><td style="text-align:center"><strong style="color:${getGrade(g.score).color}">${g.grade}</strong></td><td style="color:#666">${g.remark}</td></tr>`).join('')}
-        <tr style="border-top:2px solid #1a6b3c"><td><strong>Overall Average</strong></td><td style="text-align:center;font-weight:700;color:${grObj.color}">${avg}%</td><td style="text-align:center"><strong style="color:${grObj.color}">${grObj.grade}</strong></td><td style="color:#1a6b3c;font-weight:600">${grObj.remark}</td></tr>
+        <tr style="border-top:2px solid var(--green)"><td><strong>Overall Average</strong></td><td style="text-align:center;font-weight:700;color:${grObj.color}">${avg}%</td><td style="text-align:center"><strong style="color:${grObj.color}">${grObj.grade}</strong></td><td style="color:var(--green);font-weight:600">${grObj.remark}</td></tr>
       </tbody>
     </table>
     <div class="rc-footer">

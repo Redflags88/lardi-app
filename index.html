@@ -14,27 +14,29 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared.css">
+<script src="/school.config.js"></script>
+<script>(function(c){document.documentElement.style.setProperty('--green',c.color);var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=c.color;var a=document.querySelector('meta[name="apple-mobile-web-app-title"]');if(a)a.content=c.appName;})(SCHOOL_CONFIG);</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Outfit',sans-serif;background:#1a6b3c;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+body{font-family:'Outfit',sans-serif;background:var(--green);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-card{background:#fff;border-radius:20px;padding:36px 32px;width:100%;max-width:380px;box-shadow:0 24px 64px rgba(0,0,0,.2)}
 .login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
 .login-logo img{width:44px;height:44px;border-radius:10px;object-fit:contain}
-.login-brand{font-family:"Fraunces",serif;font-size:1.4rem;font-weight:700;color:#1a6b3c}
+.login-brand{font-family:"Fraunces",serif;font-size:1.4rem;font-weight:700;color:var(--green)}
 .login-sub{font-size:.78rem;color:#888780;margin-top:1px}
 .lbl{display:block;font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#444441;margin-bottom:6px}
 .inp{width:100%;padding:11px 14px;border:1.5px solid rgba(28,28,28,.15);border-radius:10px;font-family:"Outfit",sans-serif;font-size:.9rem;color:#1C1C1C;outline:none;transition:border-color .15s;margin-bottom:14px}
-.inp:focus{border-color:#1a6b3c}
-.btn-login{width:100%;padding:12px;background:#1a6b3c;color:#fff;border:none;border-radius:10px;font-family:"Outfit",sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;transition:background .13s;margin-top:4px}
-.btn-login:hover{background:#0f3d24}
+.inp:focus{border-color:var(--green)}
+.btn-login{width:100%;padding:12px;background:var(--green);color:#fff;border:none;border-radius:10px;font-family:"Outfit",sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;transition:background .13s;margin-top:4px}
+.btn-login:hover{background:var(--green-dark)}
 .err{background:#FEE2E2;border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:9px 12px;font-size:.8rem;color:#B91C1C;margin-bottom:12px;display:none}
 .err.show{display:block}
-.forgot{font-size:.78rem;color:#1a6b3c;cursor:pointer;text-align:right;margin-top:-8px;margin-bottom:16px;display:block}
+.forgot{font-size:.78rem;color:var(--green);cursor:pointer;text-align:right;margin-top:-8px;margin-bottom:16px;display:block}
 .demo-strip{background:#F0EDE4;border-radius:10px;padding:12px 14px;margin-top:20px}
 .demo-lbl{font-size:.6rem;font-weight:600;letter-spacing:2px;color:#888780;text-transform:uppercase;margin-bottom:8px}
 .demo-pills{display:flex;flex-wrap:wrap;gap:6px}
 .pill{padding:5px 12px;background:#fff;border:1px solid rgba(28,28,28,.1);border-radius:99px;font-size:.72rem;cursor:pointer;color:#444441;transition:all .13s}
-.pill:hover{border-color:#1a6b3c;color:#1a6b3c}
+.pill:hover{border-color:var(--green);color:var(--green)}
 .footer-note{font-size:.7rem;color:#888780;text-align:center;margin-top:16px;line-height:1.6}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
@@ -79,9 +81,9 @@ body{font-family:'Outfit',sans-serif;background:#1a6b3c;min-height:100vh;display
   </div>
 
   <div class="footer-note">
-    By signing in you agree to our <a href="/privacy.html" style="color:#1a6b3c">Privacy Policy</a><br>
+    By signing in you agree to our <a href="/privacy.html" style="color:var(--green)">Privacy Policy</a><br>
     Protected under Ghana Data Protection Act 2012 (Act 843)<br>
-    <a href="/landing.html" style="color:#1a6b3c">← Back to lardigh.com</a>
+    <a href="/landing.html" style="color:var(--green)">← Back to lardigh.com</a>
   </div>
 </div>
 
@@ -137,7 +139,7 @@ async function doReset() {
   try {
     await auth.sendPasswordResetEmail(email);
     err.textContent='Reset email sent. Check your inbox.';
-    err.style.background='#e8f5ee';err.style.color='#1a6b3c';err.className='err show';
+    err.style.background='#e8f5ee';err.style.color=SCHOOL_CONFIG.color;err.className='err show';
   } catch(e) { err.textContent='Could not send reset email.'; err.className='err show'; }
 }
 

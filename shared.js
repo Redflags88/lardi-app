@@ -3,16 +3,16 @@
 // Leone Digital Africa Limited · lardigh.com
 
 // ─────────────────────────────────────────
-// SCHOOL DEFAULTS — overridden at runtime by Firestore settings
+// SCHOOL DEFAULTS — initialised from school.config.js; overridden at runtime by Firestore
 // ─────────────────────────────────────────
 const SCHOOL = {
-  name:    'Lardi Demo School',
-  city:    'Accra, Ghana',
-  phone:   '+233 00 000 0000',
-  email:   'hello@lardigh.com',
-  term:    'Term 2',
-  year:    '2026–2027',
-  color:   '#1a6b3c',
+  name:  SCHOOL_CONFIG.name,
+  city:  SCHOOL_CONFIG.city,
+  phone: SCHOOL_CONFIG.phone,
+  email: SCHOOL_CONFIG.email,
+  term:  SCHOOL_CONFIG.term,
+  year:  SCHOOL_CONFIG.year,
+  color: SCHOOL_CONFIG.color,
 };
 
 // Load school settings from Firestore — never throws
@@ -130,3 +130,12 @@ function showToast(msg, type) {
   t.style.display = 'block';
   setTimeout(() => { t.style.display = 'none'; }, 2800);
 }
+
+// Apply school logo from school.config.js to every img on this page
+(function() {
+  document.querySelectorAll('img').forEach(function(img) {
+    if (img.getAttribute('src') && img.getAttribute('src').includes('lardi-mark')) {
+      img.src = SCHOOL_CONFIG.logoPath;
+    }
+  });
+})();

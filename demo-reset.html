@@ -257,7 +257,7 @@ async function doReset() {
     // ── STEP 1: CLEAR ────────────────────────────────────
     log('Step 1 — Clearing old data');
     prog(3);
-    const COLS = ['students','attendance','grades','grade_summaries',
+    const COLS = ['students','staff','attendance','grades','grade_summaries',
                   'fee_payments','fee_structure','books','book_borrows',
                   'announcements','timetable'];
 
@@ -457,10 +457,35 @@ async function doReset() {
     }
     await bFlush();
     log('Step 7 done — 10 books, 3 borrows, 1 overdue\n');
-    prog(94);
+    prog(90);
 
-    // ── STEP 8: ANNOUNCEMENTS ─────────────────────────────
-    log('Step 8 — Adding announcements');
+    // ── STEP 8: STAFF ─────────────────────────────────────
+    log('Step 8 — Adding staff');
+    const STAFF_SEED = [
+      {name:'Mr. Kofi Asante',       role:'Head Teacher',            department:'Administration', subjects:['english','social'],    salary:6000},
+      {name:'Mrs. Abena Mensah',     role:'Assistant Head Teacher',  department:'Administration', subjects:['maths','science'],     salary:5500},
+      {name:'Mr. Yaw Boateng',       role:'Teacher',                 department:'Primary',        subjects:['english','rme'],       salary:4200},
+      {name:'Ms. Akosua Darko',      role:'Teacher',                 department:'JHS',            subjects:['maths','ict'],         salary:4800},
+      {name:'Mr. Kwame Adjei',       role:'Teacher',                 department:'JHS',            subjects:['science','social'],    salary:4500},
+      {name:'Mrs. Ama Owusu',        role:'Teacher',                 department:'Primary',        subjects:['french','ghanalang'],  salary:4300},
+      {name:'Mr. Fiifi Quaye',       role:'Teacher',                 department:'Primary',        subjects:['maths','bdt'],         salary:4100},
+      {name:'Ms. Adwoa Tetteh',      role:'Teacher',                 department:'JHS',            subjects:['english','history'],   salary:4400},
+    ];
+    for (let i = 0; i < STAFF_SEED.length; i++) {
+      const st = STAFF_SEED[i];
+      const sid = 'ST' + String(i+1).padStart(3,'0');
+      bSet(db.collection('staff').doc(sid), {
+        staffId: sid, ...st,
+        status: 'active', photoURL: '',
+        joinedAt: new Date(), updatedAt: new Date(),
+      });
+    }
+    await bFlush();
+    log('Step 8 done — ' + STAFF_SEED.length + ' staff members\n');
+    prog(96);
+
+    // ── STEP 9: ANNOUNCEMENTS ─────────────────────────────
+    log('Step 9 — Adding announcements');
     const ANNS = [
       {title:'Fee Payment Deadline',body:'All parents are reminded that fees must be paid by end of this week.',priority:'alert',audience:'parents'},
       {title:'End of Term Examinations',body:'Examinations begin next Monday. Students should revise all topics.',priority:'warn',audience:'everyone'},
@@ -476,12 +501,13 @@ async function doReset() {
       });
     }
     await bFlush();
-    log('Step 8 done — 5 announcements\n');
+    log('Step 9 done — 5 announcements\n');
     prog(100);
 
     // ── DONE ──────────────────────────────────────────────
     log('✅ RESET COMPLETE — Ready for your pitch!');
     log('   Students:      ' + STUDENTS.length);
+    log('   Staff:         ' + STAFF_SEED.length);
     log('   Attendance:    ' + (DAYS.length * STUDENTS.length) + ' records');
     log('   Grades:        all 3 terms');
     log('   Payments:      ' + payCount);

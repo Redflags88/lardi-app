@@ -314,23 +314,17 @@ async function getClassAttendanceSummary(classKey, term) {
 
 async function getClassGrades(classKey, term, year) {
   try {
-    const snap = await db.collection('grades')
-      .where('classKey','==',classKey)
-      .where('term','==',term)
-      .where('year','==',year)
-      .get();
-    return snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    const snap = await db.collection('grades').where('classKey','==',classKey).get();
+    return snap.docs.map(d => ({ id:d.id, ...d.data() }))
+      .filter(d => d.term === term && d.year === year);
   } catch(e) { console.error('getClassGrades:',e); return []; }
 }
 
 async function getStudentGrades(studentId, term, year) {
   try {
-    const snap = await db.collection('grades')
-      .where('studentId','==',studentId)
-      .where('term','==',term)
-      .where('year','==',year)
-      .get();
-    const docs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    const snap = await db.collection('grades').where('studentId','==',studentId).get();
+    let docs = snap.docs.map(d => ({ id:d.id, ...d.data() }))
+      .filter(d => d.term === term && d.year === year);
     docs.sort((a,b) => (a.subjectKey||'').localeCompare(b.subjectKey||''));
     return docs;
   } catch(e) { console.error('DB error:', e.message); return []; }
@@ -363,13 +357,11 @@ async function saveGrades(entries, term, year, enteredBy) {
 
 async function rebuildGradeSummary(studentId, term, year) {
   try {
-    const snap = await db.collection('grades')
-      .where('studentId','==',studentId)
-      .where('term','==',term)
-      .where('year','==',year)
-      .get();
-    if (snap.empty) return;
-    const scores = snap.docs.map(d => d.data().score||0);
+    const snap = await db.collection('grades').where('studentId','==',studentId).get();
+    const filtered = snap.docs.filter(d => { const x=d.data(); return x.term===term && x.year===year; });
+    const snap2 = { docs: filtered, empty: filtered.length===0 };
+    if (snap2.empty) return;
+    const scores = snap2.docs.map(d => (d.data ? d.data() : d).score||0);
     const avg = scores.reduce((s,n)=>s+n,0) / scores.length;
     const student = await getStudentById(studentId);
     await db.collection('grade_summaries').doc(`${studentId}_${term}_${year}`).set({
@@ -402,11 +394,10 @@ async function getFeeStructure(classKey, term, year) {
 
 async function getStudentPayments(studentId, term, year) {
   try {
-    let q = db.collection('fee_payments').where('studentId','==',studentId);
-    if (term) q = q.where('term','==',term);
-    if (year) q = q.where('year','==',year);
-    const snap = await q.get();
-    const docs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const snap = await db.collection('fee_payments').where('studentId','==',studentId).get();
+    let docs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    if (term) docs = docs.filter(d => d.term === term);
+    if (year) docs = docs.filter(d => d.year === year);
     docs.sort((a,b)=>{
       const ta = a.paidAt?.toMillis ? a.paidAt.toMillis() : 0;
       const tb = b.paidAt?.toMillis ? b.paidAt.toMillis() : 0;
@@ -418,11 +409,9 @@ async function getStudentPayments(studentId, term, year) {
 
 async function getPaymentsByTerm(term, year, limitTo=50) {
   try {
-    const snap = await db.collection('fee_payments')
-      .where('term','==',term)
-      .where('year','==',year)
-      .get();
-    const docs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const snap = await db.collection('fee_payments').where('term','==',term).get();
+    let docs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    docs = docs.filter(d => d.year === year);
     docs.sort((a,b)=>{
       const ta = a.paidAt?.toMillis ? a.paidAt.toMillis() : 0;
       const tb = b.paidAt?.toMillis ? b.paidAt.toMillis() : 0;
@@ -450,19 +439,21 @@ async function recordPayment({ studentId, studentName, classKey, term, year, amo
 async function getOutstanding(term, year, limitTo=50) {
   try {
     const [studSnap, feeSnap] = await Promise.all([
-      db.collection('students').where('status','==','active').get(),
-      db.collection('fee_payments').where('term','==',term).where('year','==',year).get(),
+      db.collection('students').get(),
+      db.collection('fee_payments').where('term','==',term).get(),
     ]);
     const paid = {};
     feeSnap.docs.forEach(d => {
       const x = d.data();
+      if (x.year !== year) return;
       paid[x.studentId] = (paid[x.studentId]||0) + (x.amount||0);
     });
     const outstanding = [];
     for (const doc of studSnap.docs) {
       const s = { id:doc.id, ...doc.data() };
+      if (s.status && s.status !== 'active') continue;
       const expected = s.classKey?.startsWith('jhs') ? 2400 : 2000;
-      const paidAmt  = paid[doc.id]||0;
+      const paidAmt  = paid[s.studentId] || paid[doc.id] || 0;
       const balance  = expected - paidAmt;
       if (balance > 0) outstanding.push({ ...s, expected, paidAmt, balance });
     }
@@ -583,12 +574,9 @@ async function addAnnouncement({ title, body, audience, classKey, priority, chan
 
 async function getTimetable(classKey, term, year) {
   try {
-    const snap = await db.collection('timetable')
-      .where('classKey','==',classKey)
-      .where('term','==',term)
-      .where('year','==',year)
-      .get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}));
+    const snap = await db.collection('timetable').where('classKey','==',classKey).get();
+    return snap.docs.map(d=>({id:d.id,...d.data()}))
+      .filter(d => !d.term || (d.term === term && (!d.year || d.year === year)));
   } catch(e) { console.error('DB error:', e.message); return []; }
 }
 

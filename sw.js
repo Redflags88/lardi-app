@@ -2,7 +2,7 @@
 // Service Worker v1
 // Leone Digital Africa Limited · lardigh.com
 
-const CACHE = 'lardi-v2';
+const CACHE = 'lardi-v3';
 
 const STATIC = [
   '/', '/index.html',
@@ -13,7 +13,7 @@ const STATIC = [
   '/student.html', '/export.html', '/settings.html',
   '/demo-reset.html', '/privacy.html',
   '/shared.css', '/shared.js', '/auth.js', '/db.js',
-  '/firebase-config.js', '/manifest.json',
+  '/firebase-config.js', '/school.config.js', '/manifest.json',
   '/lardi-mark.png', '/icon-192.png', '/icon-512.png',
   '/apple-touch-icon.png',
 ];

@@ -226,12 +226,14 @@ function bSet(ref, data) {
 }
 
 async function bFlush() {
-  if (_batch && _batchCount > 0) {
-    await _batch.commit();
-    await wait(400);
-  }
+  if (!_batch || _batchCount === 0) { _batch = null; _batchCount = 0; return; }
+  // Null out _batch BEFORE committing so a commit error never leaves
+  // a dead batch in the global variable that bSet() would reuse.
+  const toCommit = _batch;
   _batch = null;
   _batchCount = 0;
+  await toCommit.commit();
+  await wait(400);
 }
 
 async function bCheck() {
@@ -251,6 +253,7 @@ async function doReset() {
   btn.disabled    = true;
   btn.textContent = '⏳ Working…';
   logEl().textContent = '';
+  _batch = null; _batchCount = 0; // reset batch state in case a previous run failed mid-way
 
   try {
 

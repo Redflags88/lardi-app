@@ -7,27 +7,38 @@
 // ─────────────────────────────────────────
 
 async function getDashboardStats() {
-  try {
-    const term = SCHOOL.term, year = SCHOOL.year;
-    const today = todayStr();
-    const [studSnap, staffSnap, feeSnap] = await Promise.all([
-      db.collection('students').where('status','==','active').get(),
-      db.collection('staff').where('status','==','active').get(),
-      db.collection('fee_payments').where('term','==',term).where('year','==',year).get(),
-    ]);
-    // Get today's attendance from seeded dates
-    const attSnap = await db.collection('attendance').where('date','==',today).where('status','==','absent').get();
-    const totalFees = feeSnap.docs.reduce((s,d) => s + (d.data().amount||0), 0);
-    return {
-      totalStudents: studSnap.size,
-      totalStaff:    staffSnap.size,
-      absentToday:   attSnap.size,
-      feesCollected: totalFees,
-    };
-  } catch(e) {
-    console.error('getDashboardStats:', e);
-    return { totalStudents:0, totalStaff:0, absentToday:0, feesCollected:0 };
-  }
+  const term = SCHOOL.term, year = SCHOOL.year;
+  const today = todayStr();
+
+  // Run each query independently so one failure cannot zero-out the others.
+  // All multi-field filtering is done in memory to avoid composite index requirements.
+  const safe = async (fn) => { try { return await fn(); } catch(e) { console.error('getDashboardStats partial error:', e.message); return null; } };
+
+  const [studSnap, staffSnap, feeSnap, attSnap] = await Promise.all([
+    safe(() => db.collection('students').get()),
+    safe(() => db.collection('staff').where('status','==','active').get()),
+    safe(() => db.collection('fee_payments').where('term','==',term).get()),
+    safe(() => db.collection('attendance').where('date','==',today).get()),
+  ]);
+
+  // Students: include docs with status='active' OR no status field (handles manually-added records)
+  const totalStudents = studSnap
+    ? studSnap.docs.filter(d => { const s = d.data().status; return !s || s === 'active'; }).length
+    : 0;
+
+  const totalStaff = staffSnap ? staffSnap.size : 0;
+
+  // Fee payments: filter by year in memory (avoids composite index on term+year)
+  const feesCollected = feeSnap
+    ? feeSnap.docs.filter(d => d.data().year === year).reduce((s,d) => s + (d.data().amount||0), 0)
+    : 0;
+
+  // Attendance: filter by status in memory (avoids composite index on date+status)
+  const absentToday = attSnap
+    ? attSnap.docs.filter(d => d.data().status === 'absent').length
+    : 0;
+
+  return { totalStudents, totalStaff, feesCollected, absentToday };
 }
 
 async function getAttTrend(days = 5) {
@@ -50,17 +61,20 @@ async function getAttTrend(days = 5) {
 async function getFeeCollectionByClass(term, year) {
   try {
     const [feeSnap, stuSnap] = await Promise.all([
-      db.collection('fee_payments').where('term','==',term).where('year','==',year).get(),
-      db.collection('students').where('status','==','active').get(),
+      db.collection('fee_payments').where('term','==',term).get(),
+      db.collection('students').get(),
     ]);
     const paid = {};
     feeSnap.docs.forEach(d => {
       const x = d.data();
+      if (x.year !== year) return; // filter by year in memory
       paid[x.classKey] = (paid[x.classKey]||0) + (x.amount||0);
     });
     const expected = {};
     stuSnap.docs.forEach(d => {
       const s = d.data();
+      const st = s.status;
+      if (st && st !== 'active') return; // skip inactive students
       const fee = s.classKey?.startsWith('jhs') ? 2400 : 2000;
       expected[s.classKey] = (expected[s.classKey]||0) + fee;
     });

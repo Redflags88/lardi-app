@@ -145,7 +145,7 @@ const TERM=SCHOOL.term,YEAR=SCHOOL.year;
   document.getElementById('sb-school').textContent=SCHOOL.name;
   document.getElementById('sb-term').textContent=`${SCHOOL.term} · ${SCHOOL.year}`;
   if(profile.role!=='admin'){const _rl=document.getElementById('demoreset-link');if(_rl)_rl.style.display='none';const _el=document.getElementById('export-link');if(_el)_el.style.display='none';const _sl=document.getElementById('settings-link');if(_sl)_sl.style.display='none';const _an=document.getElementById('admin-nav');if(_an)_an.style.display='none';}
-  document.getElementById('f-cls').innerHTML=renderClassOptions();
+  document.getElementById('f-cls').innerHTML=CLASSES.map(c=>`<option value="${c.key}">${c.label}</option>`).join('');
   document.getElementById('cls-filter').innerHTML='<option value="">All Classes</option>'+CLASSES.map(c=>`<option value="${c.key}">${c.label}</option>`).join('');
   document.getElementById('pills').innerHTML='<span class="pill active" onclick="pill(\'\',this)">All</span>'+CLASSES.map(c=>`<span class="pill" onclick="pill('${c.key}',this)">${c.label}</span>`).join('');
   await loadAll();
@@ -155,8 +155,11 @@ const TERM=SCHOOL.term,YEAR=SCHOOL.year;
 async function loadAll(){
   document.getElementById('box').innerHTML='<div class="loading-center">Loading students…</div>';
   ALL=await getStudents({});
-  const snap=await db.collection('fee_payments').where('term','==',TERM).where('year','==',YEAR).get();
-  PMAP={};snap.docs.forEach(d=>{const x=d.data();PMAP[x.studentId]=(PMAP[x.studentId]||0)+(x.amount||0);});
+  // Single-field filter + in-memory year check avoids composite index requirement
+  try {
+    const snap=await db.collection('fee_payments').where('term','==',TERM).get();
+    PMAP={};snap.docs.forEach(d=>{const x=d.data();if(x.year===YEAR)PMAP[x.studentId]=(PMAP[x.studentId]||0)+(x.amount||0);});
+  } catch(e){ PMAP={}; console.warn('Fee payments load error:',e.message); }
   document.getElementById('total-badge').textContent=`${ALL.length} students`;
   filter();
 }

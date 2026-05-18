@@ -129,10 +129,12 @@ async function getRecentAnnouncements(limitTo = 3) {
 
 async function getStudents({ classKey=null, status='active', search='' } = {}) {
   try {
-    let q = db.collection('students').where('status','==',status);
-    if (classKey) q = q.where('classKey','==',classKey);
-    const snap = await q.get();
+    // Fetch all students then filter in memory — avoids composite index requirements
+    // and handles documents where the status field is absent.
+    const snap = await db.collection('students').get();
     let docs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    if (status) docs = docs.filter(d => !d.status || d.status === status);
+    if (classKey) docs = docs.filter(d => d.classKey === classKey);
     docs.sort((a,b) => (a.lastName||'').localeCompare(b.lastName||''));
     if (search) {
       const s = search.toLowerCase();

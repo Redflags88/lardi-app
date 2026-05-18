@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#1a6b3c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lardi">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<title>Sign In — Lardi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Outfit',sans-serif;background:#1a6b3c;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:#fff;border-radius:20px;padding:36px 32px;width:100%;max-width:380px;box-shadow:0 24px 64px rgba(0,0,0,.2)}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.login-logo img{width:44px;height:44px;border-radius:10px;object-fit:contain}
+.login-brand{font-family:"Fraunces",serif;font-size:1.4rem;font-weight:700;color:#1a6b3c}
+.login-sub{font-size:.78rem;color:#888780;margin-top:1px}
+.lbl{display:block;font-size:.65rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:#444441;margin-bottom:6px}
+.inp{width:100%;padding:11px 14px;border:1.5px solid rgba(28,28,28,.15);border-radius:10px;font-family:"Outfit",sans-serif;font-size:.9rem;color:#1C1C1C;outline:none;transition:border-color .15s;margin-bottom:14px}
+.inp:focus{border-color:#1a6b3c}
+.btn-login{width:100%;padding:12px;background:#1a6b3c;color:#fff;border:none;border-radius:10px;font-family:"Outfit",sans-serif;font-size:.92rem;font-weight:600;cursor:pointer;transition:background .13s;margin-top:4px}
+.btn-login:hover{background:#0f3d24}
+.err{background:#FEE2E2;border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:9px 12px;font-size:.8rem;color:#B91C1C;margin-bottom:12px;display:none}
+.err.show{display:block}
+.forgot{font-size:.78rem;color:#1a6b3c;cursor:pointer;text-align:right;margin-top:-8px;margin-bottom:16px;display:block}
+.demo-strip{background:#F0EDE4;border-radius:10px;padding:12px 14px;margin-top:20px}
+.demo-lbl{font-size:.6rem;font-weight:600;letter-spacing:2px;color:#888780;text-transform:uppercase;margin-bottom:8px}
+.demo-pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{padding:5px 12px;background:#fff;border:1px solid rgba(28,28,28,.1);border-radius:99px;font-size:.72rem;cursor:pointer;color:#444441;transition:all .13s}
+.pill:hover{border-color:#1a6b3c;color:#1a6b3c}
+.footer-note{font-size:.7rem;color:#888780;text-align:center;margin-top:16px;line-height:1.6}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="login-card">
+  <div class="login-logo">
+    <img src="/lardi-mark.png" alt="Lardi">
+    <div>
+      <div class="login-brand">Lardi</div>
+      <div class="login-sub">School Management System</div>
+    </div>
+  </div>
+
+  <div class="err" id="err"></div>
+
+  <div id="login-form">
+    <label class="lbl">Email Address</label>
+    <input type="text" class="inp" id="email" placeholder="admin@yourschool.edu.gh" autocomplete="email" inputmode="email">
+    <label class="lbl">Password</label>
+    <input type="password" class="inp" id="pass" placeholder="••••••••" autocomplete="current-password">
+    <span class="forgot" onclick="showForgot()">Forgot password?</span>
+    <button class="btn-login" id="login-btn" onclick="doLogin()">Sign in →</button>
+  </div>
+
+  <div id="forgot-form" style="display:none">
+    <p style="font-size:.84rem;color:#888780;margin-bottom:14px;line-height:1.6">Enter your email and we will send a password reset link.</p>
+    <label class="lbl">Email Address</label>
+    <input type="text" class="inp" id="reset-email" placeholder="your@email.com" inputmode="email">
+    <button class="btn-login" onclick="doReset()">Send Reset Email</button>
+    <span class="forgot" onclick="showLogin()">← Back to sign in</span>
+  </div>
+
+  <div class="demo-strip">
+    <div class="demo-lbl">Demo accounts</div>
+    <div class="demo-pills">
+      <span class="pill" onclick="fillDemo('admin@lardigh.com','Demo@2025')">👤 Admin</span>
+      <span class="pill" onclick="fillDemo('teacher@lardigh.com','Demo@2025')">👨‍🏫 Teacher</span>
+      <span class="pill" onclick="fillDemo('parent@lardigh.com','Demo@2025')">👨‍👧 Parent</span>
+      <span class="pill" onclick="fillDemo('student@lardigh.com','Demo@2025')">🎓 Student</span>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    By signing in you agree to our <a href="/privacy.html" style="color:#1a6b3c">Privacy Policy</a><br>
+    Protected under Ghana Data Protection Act 2012 (Act 843)<br>
+    <a href="/landing.html" style="color:#1a6b3c">← Back to lardigh.com</a>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/firebase-config.js"></script>
+<script src="/shared.js"></script>
+
+<script>
+auth.onAuthStateChanged(async user => {
+  if (!user) return;
+  try {
+    const doc = await db.collection('users').doc(user.uid).get();
+    const role = doc.exists ? doc.data().role : 'teacher';
+    const portals = { admin:'dashboard.html', teacher:'dashboard.html', parent:'parent.html', student:'student.html' };
+    window.location.href = portals[role] || 'dashboard.html';
+  } catch(e) { window.location.href = 'dashboard.html'; }
+});
+
+function fillDemo(e, p) {
+  document.getElementById('email').value = e;
+  document.getElementById('pass').value  = p;
+}
+
+async function doLogin() {
+  const email = document.getElementById('email').value.trim();
+  const pass  = document.getElementById('pass').value;
+  const err   = document.getElementById('err');
+  const btn   = document.getElementById('login-btn');
+  err.className = 'err';
+  if (!email || !pass) { err.textContent = 'Please enter your email and password.'; err.className = 'err show'; return; }
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="animation:spin .7s linear infinite;vertical-align:-4px"><circle cx="12" cy="12" r="10" stroke="white" stroke-width="3" stroke-dasharray="31.4" stroke-dashoffset="10" stroke-linecap="round"/></svg> Signing in…';
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
+  } catch(e) {
+    const msgs = { 'auth/user-not-found':'No account found with this email.', 'auth/wrong-password':'Incorrect password.', 'auth/invalid-email':'Invalid email address.', 'auth/too-many-requests':'Too many attempts. Please wait a few minutes.' };
+    err.textContent = msgs[e.code] || 'Sign in failed. Please try again.';
+    err.className = 'err show';
+    btn.disabled = false;
+    btn.textContent = 'Sign in →';
+  }
+}
+
+function showForgot() { document.getElementById('login-form').style.display='none'; document.getElementById('forgot-form').style.display='block'; }
+function showLogin()   { document.getElementById('forgot-form').style.display='none'; document.getElementById('login-form').style.display='block'; }
+
+async function doReset() {
+  const email = document.getElementById('reset-email').value.trim();
+  const err   = document.getElementById('err');
+  if (!email) { err.textContent='Enter your email address.'; err.className='err show'; return; }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    err.textContent='Reset email sent. Check your inbox.';
+    err.style.background='#e8f5ee';err.style.color='#1a6b3c';err.className='err show';
+  } catch(e) { err.textContent='Could not send reset email.'; err.className='err show'; }
+}
+
+document.addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+</script>
+<script>if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script>
+</body>
+</html>

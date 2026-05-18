@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lardi">
+<meta name="mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#1a6b3c">
+<title>Finance &amp; Fees — Lardi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css">
+<style>
+.tab-bar{display:flex;border-bottom:2px solid var(--border);margin-bottom:20px}
+.tab{padding:10px 20px;font-size:.84rem;font-weight:600;color:var(--carbon-soft);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .13s}
+.tab.active{color:var(--green);border-bottom-color:var(--green)}
+.receipt-box{background:#fff;padding:24px;font-family:'Outfit',sans-serif;max-width:400px;margin:0 auto}
+.receipt-title{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700;color:#1a6b3c;text-align:center;margin-bottom:4px}
+.receipt-sub{font-size:.74rem;color:#888;text-align:center;margin-bottom:16px}
+.receipt-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0ede4;font-size:.82rem}
+.receipt-row:last-child{border-bottom:none}
+.receipt-total{display:flex;justify-content:space-between;padding:10px 0;font-size:.95rem;font-weight:700;border-top:2px solid #1a6b3c;margin-top:8px}
+@media print{#sidebar,#topbar,.tab-bar,.card:not(.receipt-print),button,.btn{display:none!important}.receipt-box{border:none!important;box-shadow:none!important}}
+</style>
+</head>
+<body>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+<nav id="sidebar">
+  <div class="sidebar-logo"><div class="logo-mark"><div class="logo-pin" style="background:none;padding:0"><img src="/lardi-mark.png?v=3" style="width:36px;height:36px;object-fit:contain;border-radius:6px" alt="Lardi"></div><div><div class="logo-name">Lardi</div><div class="logo-sub">School Management</div></div></div></div>
+  <div class="sidebar-school"><div class="school-name" id="sb-school">Lardi Demo School</div><div class="school-term" id="sb-term">—</div></div>
+  <div class="nav-section">Main</div><a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+  <div class="nav-section">Academic</div>
+  <a href="students.html" class="nav-item"><span class="nav-icon">🎓</span> Students</a>
+  <a href="attendance.html" class="nav-item"><span class="nav-icon">📋</span> Attendance</a>
+  <a href="grades.html" class="nav-item"><span class="nav-icon">📝</span> Grades &amp; Reports</a>
+  <a href="timetable.html" class="nav-item"><span class="nav-icon">🗓️</span> Timetable</a>
+  <div class="nav-section">Operations</div>
+  <a href="staff.html" class="nav-item"><span class="nav-icon">👨‍🏫</span> Staff</a>
+  <a href="finance.html" class="nav-item active"><span class="nav-icon">💰</span> Finance &amp; Fees</a>
+  <a href="library.html" class="nav-item"><span class="nav-icon">📚</span> Library</a>
+  <a href="comms.html" class="nav-item"><span class="nav-icon">💬</span> Communication</a>
+  <div class="nav-section" id="admin-nav">Admin</div><a href="export.html" class="nav-item" id="export-link"><span class="nav-icon">💾</span> Export Data</a>
+  <a href="/demo-reset.html" class="nav-item" id="demoreset-link"><span class="nav-icon">🔄</span> Reset Demo</a>
+  <div class="sidebar-bottom">
+    <div class="user-card"><div class="user-av" id="sb-av">?</div><div><div class="user-name" id="sb-name">Loading…</div><div class="user-role" id="sb-role">—</div></div></div>
+    <div class="sidebar-signout" onclick="signOut()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign out</div>
+  </div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="openSidebar()"><svg viewBox="0 0 24 24" fill="none" stroke="var(--carbon)" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div class="topbar-title">Finance &amp; Fees</div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-badge" id="term-badge">Term 2 · 2024–2025</span>
+      <button class="btn btn-green btn-sm" onclick="openPay()">+ Record Payment</button>
+    </div>
+  </div>
+  <div id="content">
+    <!-- STATS -->
+    <div class="stat-grid" id="fin-stats">
+      <div class="stat-card"><div class="stat-icon si-blue">💰</div><div class="stat-label">Expected (Term)</div><div class="stat-value skel" style="height:32px;width:120px"></div></div>
+      <div class="stat-card"><div class="stat-icon si-green">✅</div><div class="stat-label">Collected</div><div class="stat-value skel" style="height:32px;width:100px"></div></div>
+      <div class="stat-card"><div class="stat-icon si-red">⚠️</div><div class="stat-label">Outstanding</div><div class="stat-value skel" style="height:32px;width:100px"></div></div>
+      <div class="stat-card"><div class="stat-icon si-gold">📊</div><div class="stat-label">Collection Rate</div><div class="stat-value skel" style="height:32px;width:60px"></div></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('payments',this)">Recent Payments</div>
+      <div class="tab" onclick="switchTab('outstanding',this)">Outstanding Balances</div>
+    </div>
+
+    <!-- PAYMENTS TAB -->
+    <div id="tab-payments">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+        <div class="search-bar" style="flex:1;min-width:200px"><span class="search-bar-icon">🔍</span><input type="text" id="pay-search" placeholder="Search student name…" oninput="filterPayments()"></div>
+        <select class="fi" style="width:150px" id="pay-class" onchange="filterPayments()"><option value="">All Classes</option></select>
+        <select class="fi" style="width:140px" id="pay-method" onchange="filterPayments()"><option value="">All Methods</option><option>Cash</option><option>Mobile Money</option><option>Bank Transfer</option></select>
+      </div>
+      <div class="card"><div class="table-wrap">
+        <table><thead><tr><th>Student</th><th>Class</th><th>Amount</th><th>Method</th><th>Reference</th><th>Date</th><th></th></tr></thead>
+        <tbody id="pay-table"><tr><td colspan="7"><div class="loading-center">Loading…</div></td></tr></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- OUTSTANDING TAB -->
+    <div id="tab-outstanding" style="display:none">
+      <div class="card"><div class="table-wrap">
+        <table><thead><tr><th>Student</th><th>Class</th><th>Expected</th><th>Paid</th><th>Balance</th><th></th></tr></thead>
+        <tbody id="out-table"><tr><td colspan="6"><div class="loading-center">Loading…</div></td></tr></tbody>
+        </table>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- RECORD PAYMENT MODAL -->
+<div class="modal-overlay" id="pay-modal" onclick="if(event.target===this)closePay()">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-title">💳 Record Fee Payment</div>
+    <div class="form-err" id="pay-err"></div>
+    <div class="field">
+      <label>Student *</label>
+      <input type="text" id="stu-search" placeholder="Type student name or ID…" oninput="searchStudents(this.value)" autocomplete="off">
+      <div id="stu-dropdown" style="position:relative"></div>
+    </div>
+    <div id="stu-selected" style="display:none;background:var(--green-light);border-radius:var(--r-md);padding:10px 12px;margin-bottom:12px;font-size:.84rem;color:var(--green);font-weight:500"></div>
+    <div class="form-row-2">
+      <div class="field"><label>Amount (GHS) *</label><input type="number" id="f-amount" placeholder="e.g. 2000" min="0"></div>
+      <div class="field"><label>Payment Method</label><select id="f-method"><option>Cash</option><option>Mobile Money</option><option>Bank Transfer</option></select></div>
+    </div>
+    <div class="form-row-2">
+      <div class="field"><label>Term</label><select id="f-term"></select></div>
+      <div class="field"><label>Reference / MoMo No.</label><input type="text" id="f-ref" placeholder="Optional"></div>
+    </div>
+    <div class="field"><label>Notes</label><input type="text" id="f-notes" placeholder="Optional notes"></div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closePay()">Cancel</button><button class="btn btn-green" id="pay-btn" onclick="doPay()">Record Payment</button></div>
+  </div>
+</div>
+
+<!-- RECEIPT MODAL -->
+<div class="modal-overlay" id="receipt-modal" onclick="if(event.target===this)closeReceipt()">
+  <div class="modal" style="max-width:440px;padding:0;overflow:hidden">
+    <div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--white);position:sticky;top:0">
+      <span style="font-size:.88rem;font-weight:600">🧾 Payment Receipt</span>
+      <div style="display:flex;gap:8px"><button class="btn btn-green btn-sm" onclick="window.print()">🖨️ Print</button><button class="btn btn-ghost btn-sm" onclick="closeReceipt()">✕</button></div>
+    </div>
+    <div id="receipt-content" style="padding:20px"></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/firebase-config.js"></script><script src="/shared.js"></script><script src="/auth.js"></script><script src="/db.js"></script>
+<script>
+let PROF=null,ALL_PAY=[],FIL_PAY=[],ALL_OUT=[],SEL_STU=null,ALL_STU=[];
+const TERM=SCHOOL.term,YEAR=SCHOOL.year;
+
+(async()=>{
+  const {profile}=await requireAuth(['admin','teacher']);
+  await loadSchoolSettings();
+  // Teachers can VIEW finance but cannot record payments
+  if(profile.role==='teacher'){
+    document.getElementById('topbar-right').innerHTML='<span class="topbar-badge" style="background:var(--amber-light);color:var(--amber)">View Only — Admin records payments</span>';
+    // Hide record payment button
+    setTimeout(()=>{
+      document.querySelectorAll('.btn-green').forEach(b=>{if(b.textContent.includes('Payment'))b.style.display='none';});
+    },100);
+  }
+  PROF=profile;
+  document.getElementById('sb-av').textContent=getInitials(profile.name);
+  document.getElementById('sb-name').textContent=profile.name;
+  document.getElementById('sb-role').textContent=profile.role;
+  document.getElementById('sb-school').textContent=SCHOOL.name;
+  document.getElementById('sb-term').textContent=`${SCHOOL.term} · ${SCHOOL.year}`;
+  document.getElementById('term-badge').textContent=`${SCHOOL.term} · ${SCHOOL.year}`;
+  if(profile.role!=='admin'){const _rl=document.getElementById('demoreset-link');if(_rl)_rl.style.display='none';const _el=document.getElementById('export-link');if(_el)_el.style.display='none';const _sl=document.getElementById('settings-link');if(_sl)_sl.style.display='none';const _an=document.getElementById('admin-nav');if(_an)_an.style.display='none';}
+  document.getElementById('pay-class').innerHTML='<option value="">All Classes</option>'+CLASSES.map(c=>`<option value="${c.key}">${c.label}</option>`).join('');
+  document.getElementById('f-term').innerHTML=['Term 1','Term 2','Term 3'].map(t=>`<option${t===TERM?' selected':''}>${t}</option>`).join('');
+
+  // Load all in parallel
+  const [students,payments]=await Promise.all([getStudents({}),getPaymentsByTerm(TERM,YEAR,100)]);
+  ALL_STU=students;ALL_PAY=payments;FIL_PAY=payments;
+
+  // Compute stats
+  const totalStudents=students.length;
+  const exp=students.reduce((a,s)=>a+(s.classKey?.startsWith('jhs')?2400:2000),0);
+  const collected=payments.reduce((a,p)=>a+p.amount,0);
+  const rate=exp>0?pct(collected,exp):0;
+  document.getElementById('fin-stats').innerHTML=`
+    <div class="stat-card"><div class="stat-icon si-blue">💰</div><div class="stat-label">Expected (Term)</div><div class="stat-value">${fmtGHS(exp)}</div><div class="stat-sub neutral">${totalStudents} students</div></div>
+    <div class="stat-card"><div class="stat-icon si-green">✅</div><div class="stat-label">Collected</div><div class="stat-value">${fmtGHS(collected)}</div><div class="stat-sub up">${payments.length} payments</div></div>
+    <div class="stat-card"><div class="stat-icon si-red">⚠️</div><div class="stat-label">Outstanding</div><div class="stat-value">${fmtGHS(Math.max(0,exp-collected))}</div><div class="stat-sub down">Unpaid</div></div>
+    <div class="stat-card"><div class="stat-icon si-gold">📊</div><div class="stat-label">Collection Rate</div><div class="stat-value">${rate}%</div><div class="stat-sub ${rate>=80?'up':rate>=60?'neutral':'down'}">${rate>=80?'On track':rate>=60?'Moderate':'Needs attention'}</div></div>`;
+  renderPayments();
+  if(new URLSearchParams(location.search).get('action')==='pay') openPay();
+  const urlStu=new URLSearchParams(location.search).get('student');
+  if(urlStu){const s=ALL_STU.find(x=>x.id===urlStu);if(s){openPay();selectStudent(s);}}
+})();
+
+function switchTab(tab,el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  document.getElementById('tab-payments').style.display=tab==='payments'?'block':'none';
+  document.getElementById('tab-outstanding').style.display=tab==='outstanding'?'block':'none';
+  if(tab==='outstanding') loadOutstanding();
+}
+
+function filterPayments(){
+  const q=(document.getElementById('pay-search').value||'').toLowerCase();
+  const cls=document.getElementById('pay-class').value;
+  const meth=document.getElementById('pay-method').value;
+  FIL_PAY=ALL_PAY.filter(p=>{
+    const mq=!q||(p.studentName||'').toLowerCase().includes(q);
+    const mc=!cls||p.classKey===cls;
+    const mm=!meth||p.method===meth;
+    return mq&&mc&&mm;
+  });
+  renderPayments();
+}
+
+function renderPayments(){
+  if(!FIL_PAY.length){document.getElementById('pay-table').innerHTML='<tr><td colspan="7" style="color:var(--carbon-soft);padding:16px;text-align:center">No payments found</td></tr>';return;}
+  document.getElementById('pay-table').innerHTML=FIL_PAY.map(p=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:8px"><div class="av av-green">${getInitials(p.studentName||'?')}</div>${p.studentName||'—'}</div></td>
+    <td>${getClassLabel(p.classKey)}</td>
+    <td><strong style="color:var(--green)">${fmtGHS(p.amount)}</strong></td>
+    <td><span class="badge ${p.method==='Mobile Money'?'bg-blue':p.method==='Bank Transfer'?'bg-gold':'bg-gray'}">${p.method||'Cash'}</span></td>
+    <td style="font-size:.72rem;font-family:monospace;color:var(--carbon-soft)">${p.reference||'—'}</td>
+    <td style="font-size:.74rem;color:var(--carbon-soft)">${formatDate(p.paidAt)}</td>
+    <td><button class="btn btn-ghost btn-sm" onclick="showReceipt('${p.id}')">🧾</button></td>
+  </tr>`).join('');
+}
+
+async function loadOutstanding(){
+  document.getElementById('out-table').innerHTML='<tr><td colspan="6"><div class="loading-center">Loading…</div></td></tr>';
+  const out=await getOutstanding(TERM,YEAR,50);
+  if(!out.length){document.getElementById('out-table').innerHTML='<tr><td colspan="6" style="color:var(--green);padding:16px;text-align:center;font-weight:600">✓ All students have paid!</td></tr>';return;}
+  document.getElementById('out-table').innerHTML=out.map(s=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:8px"><div class="av av-red">${getInitials(s.firstName+' '+s.lastName)}</div><div><div style="font-weight:500">${s.firstName} ${s.lastName}</div><div style="font-size:.68rem;font-family:monospace;color:var(--carbon-soft)">${s.studentId}</div></div></div></td>
+    <td>${getClassLabel(s.classKey)}</td>
+    <td>${fmtGHS(s.expected)}</td>
+    <td style="color:var(--green)">${fmtGHS(s.paidAmt)}</td>
+    <td><strong style="color:var(--red)">${fmtGHS(s.balance)}</strong></td>
+    <td><button class="btn btn-green btn-sm" onclick="openPayFor('${s.id}')">Pay</button></td>
+  </tr>`).join('');
+}
+
+// PAYMENT MODAL
+let _stuTimeout=null;
+function openPay(){document.getElementById('pay-modal').classList.add('open');}
+function closePay(){document.getElementById('pay-modal').classList.remove('open');SEL_STU=null;document.getElementById('stu-search').value='';document.getElementById('stu-selected').style.display='none';document.getElementById('stu-dropdown').innerHTML='';document.getElementById('pay-err').className='form-err';['f-amount','f-ref','f-notes'].forEach(i=>document.getElementById(i).value='');}
+
+function openPayFor(studentId){
+  openPay();
+  const s=ALL_STU.find(x=>x.id===studentId);
+  if(s)selectStudent(s);
+}
+
+function searchStudents(q){
+  clearTimeout(_stuTimeout);
+  if(q.length<2){document.getElementById('stu-dropdown').innerHTML='';return;}
+  _stuTimeout=setTimeout(()=>{
+    const res=ALL_STU.filter(s=>(s.firstName+' '+s.lastName).toLowerCase().includes(q.toLowerCase())||(s.studentId||'').toLowerCase().includes(q.toLowerCase())).slice(0,8);
+    if(!res.length){document.getElementById('stu-dropdown').innerHTML='';return;}
+    document.getElementById('stu-dropdown').innerHTML=`<div style="position:absolute;width:100%;background:var(--white);border:1.5px solid var(--border-med);border-radius:var(--r-md);box-shadow:0 8px 24px rgba(28,28,28,.12);z-index:50;max-height:200px;overflow-y:auto">${res.map(s=>`<div onclick="selectStudent(${JSON.stringify(s).replace(/"/g,'&quot;')})" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);font-size:.84rem;display:flex;align-items:center;gap:8px" onmouseover="this.style.background='var(--green-light)'" onmouseout="this.style.background=''"><div class="av av-green">${getInitials(s.firstName+' '+s.lastName)}</div><div><div style="font-weight:500">${s.firstName} ${s.lastName}</div><div style="font-size:.72rem;color:var(--carbon-soft)">${s.studentId} · ${getClassLabel(s.classKey)}</div></div></div>`).join('')}</div>`;
+  },300);
+}
+
+function selectStudent(s){
+  SEL_STU=s;
+  document.getElementById('stu-search').value=`${s.firstName} ${s.lastName}`;
+  document.getElementById('stu-dropdown').innerHTML='';
+  const exp=s.classKey?.startsWith('jhs')?2400:2000;
+  document.getElementById('stu-selected').style.display='block';
+  document.getElementById('stu-selected').innerHTML=`✓ ${s.firstName} ${s.lastName} · ${getClassLabel(s.classKey)} · Expected: ${fmtGHS(exp)}`;
+}
+
+async function doPay(){
+  const err=document.getElementById('pay-err');err.className='form-err';
+  if(!SEL_STU){err.textContent='Select a student first.';err.className='form-err show';return;}
+  const amount=parseFloat(document.getElementById('f-amount').value);
+  if(!amount||amount<=0){err.textContent='Enter a valid amount.';err.className='form-err show';return;}
+  const btn=document.getElementById('pay-btn');btn.disabled=true;btn.textContent='Recording…';
+  const res=await recordPayment({studentId:SEL_STU.id,studentName:`${SEL_STU.firstName} ${SEL_STU.lastName}`,classKey:SEL_STU.classKey,term:document.getElementById('f-term').value,year:YEAR,amount,method:document.getElementById('f-method').value,reference:document.getElementById('f-ref').value.trim(),recordedBy:PROF.uid||'',notes:document.getElementById('f-notes').value.trim()});
+  btn.disabled=false;btn.textContent='Record Payment';
+  if(!res.success){err.textContent=res.error;err.className='form-err show';return;}
+  showToast(`✓ ${fmtGHS(amount)} recorded for ${SEL_STU.firstName}`,'ok');
+  closePay();
+  // Refresh payments
+  ALL_PAY=await getPaymentsByTerm(TERM,YEAR,100);FIL_PAY=ALL_PAY;renderPayments();
+}
+
+function showReceipt(payId){
+  const p=ALL_PAY.find(x=>x.id===payId);if(!p)return;
+  const now=new Date();
+  document.getElementById('receipt-content').innerHTML=`
+    <div class="receipt-box">
+      <div class="receipt-title">${SCHOOL.name}</div>
+      <div class="receipt-sub">${SCHOOL.city} · ${SCHOOL.phone}<br>Official Fee Receipt</div>
+      <div style="border:1px dashed var(--border-med);border-radius:8px;padding:12px;margin-bottom:12px">
+        ${rr('Receipt No','REC-'+payId.slice(-6).toUpperCase())}${rr('Date',now.toLocaleDateString('en-GH',{day:'numeric',month:'long',year:'numeric'}))}${rr('Student',p.studentName)}${rr('Class',getClassLabel(p.classKey))}${rr('Term',p.term+' · '+p.year)}${rr('Method',p.method)}${p.reference?rr('Reference',p.reference):''}
+        <div class="receipt-total"><span>Amount Paid</span><span style="color:#1a6b3c">${fmtGHS(p.amount)}</span></div>
+      </div>
+      <div style="text-align:center;font-size:.72rem;color:#aaa">Thank you for your payment · ${SCHOOL.name}</div>
+    </div>`;
+  document.getElementById('receipt-modal').classList.add('open');
+}
+function rr(k,v){return`<div class="receipt-row"><span style="color:#888">${k}</span><span style="font-weight:500">${v}</span></div>`;}
+function closeReceipt(){document.getElementById('receipt-modal').classList.remove('open');}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');}
+document.querySelectorAll('.hamburger').forEach(b=>b.onclick=()=>openSidebar());
+</script>
+<script>if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-bottom-nav">
+  <div class="mbn-items">
+    <a href="dashboard.html"  class="mbn-item "><span class="mbn-icon">📊</span>Home</a>
+    <a href="students.html"   class="mbn-item "><span class="mbn-icon">🎓</span>Students</a>
+    <a href="attendance.html" class="mbn-item "><span class="mbn-icon">📋</span>Attend.</a>
+    <a href="finance.html"    class="mbn-item active"><span class="mbn-icon">💰</span>Finance</a>
+    <a href="#" class="mbn-item signout-btn" onclick="signOut();return false;"><span class="mbn-icon">🚪</span>Sign Out</a>
+  </div>
+</nav>
+
+</body>
+</html>

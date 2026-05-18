@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lardi">
+<meta name="mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#1a6b3c">
+<title>Grades &amp; Reports — Lardi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css">
+<style>
+.grade-table input[type=number]{width:60px;padding:5px 7px;border:1.5px solid var(--border-med);border-radius:var(--r-sm);font-family:var(--font-b);font-size:.84rem;text-align:center;outline:none;transition:border-color .13s}
+.grade-table input[type=number]:focus{border-color:var(--green)}
+.grade-cell-badge{display:inline-flex;align-items:center;justify-content:center;width:36px;height:24px;border-radius:4px;font-size:.7rem;font-weight:700}
+.report-card{background:#fff;padding:32px;max-width:680px;margin:0 auto;font-family:'Outfit',sans-serif}
+.rc-header{display:flex;align-items:center;gap:16px;padding-bottom:16px;border-bottom:3px solid #1a6b3c;margin-bottom:20px}
+.rc-school{flex:1}
+.rc-school-name{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:700;color:#1a6b3c}
+.rc-info{background:#f0ede4;border-radius:10px;padding:12px 16px;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px}
+.rc-info-item{font-size:.8rem;color:#444}
+.rc-info-item strong{color:#1c1c1c}
+.rc-subject-table{width:100%;border-collapse:collapse;font-size:.83rem;margin-bottom:16px}
+.rc-subject-table th{background:#1a6b3c;color:#fff;padding:8px 10px;text-align:left;font-weight:600;font-size:.73rem}
+.rc-subject-table td{padding:8px 10px;border-bottom:1px solid #eee}
+.rc-subject-table tr:nth-child(even) td{background:#faf7f2}
+.rc-footer{display:flex;justify-content:space-between;margin-top:24px;padding-top:16px;border-top:2px solid #1a6b3c}
+.rc-sign{text-align:center;width:45%}
+.rc-sign-line{border-top:1px solid #aaa;padding-top:6px;font-size:.76rem;color:#888;margin-top:24px}
+@media print{body{background:#fff!important}.card,.modal-overlay,#sidebar,#topbar,.btn,#ctrl-bar{display:none!important}.report-card{padding:16px;page-break-after:always}}
+</style>
+</head>
+<body>
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+<nav id="sidebar">
+  <div class="sidebar-logo"><div class="logo-mark"><div class="logo-pin" style="background:none;padding:0"><img src="/lardi-mark.png?v=3" style="width:36px;height:36px;object-fit:contain;border-radius:6px" alt="Lardi"></div><div><div class="logo-name">Lardi</div><div class="logo-sub">School Management</div></div></div></div>
+  <div class="sidebar-school"><div class="school-name" id="sb-school">Lardi Demo School</div><div class="school-term" id="sb-term">—</div></div>
+  <div class="nav-section">Main</div><a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+  <div class="nav-section">Academic</div>
+  <a href="students.html" class="nav-item"><span class="nav-icon">🎓</span> Students</a>
+  <a href="attendance.html" class="nav-item"><span class="nav-icon">📋</span> Attendance</a>
+  <a href="grades.html" class="nav-item active"><span class="nav-icon">📝</span> Grades &amp; Reports</a>
+  <a href="timetable.html" class="nav-item"><span class="nav-icon">🗓️</span> Timetable</a>
+  <div class="nav-section">Operations</div>
+  <a href="staff.html" class="nav-item"><span class="nav-icon">👨‍🏫</span> Staff</a>
+  <a href="finance.html" class="nav-item"><span class="nav-icon">💰</span> Finance &amp; Fees</a>
+  <a href="library.html" class="nav-item"><span class="nav-icon">📚</span> Library</a>
+  <a href="comms.html" class="nav-item"><span class="nav-icon">💬</span> Communication</a>
+  <div class="nav-section" id="admin-nav">Admin</div><a href="export.html" class="nav-item" id="export-link"><span class="nav-icon">💾</span> Export Data</a>
+  <a href="/demo-reset.html" class="nav-item" id="demoreset-link"><span class="nav-icon">🔄</span> Reset Demo</a>
+  <div class="sidebar-bottom">
+    <div class="user-card"><div class="user-av" id="sb-av">?</div><div><div class="user-name" id="sb-name">Loading…</div><div class="user-role" id="sb-role">—</div></div></div>
+    <div class="sidebar-signout" onclick="signOut()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign out</div>
+  </div>
+</nav>
+<div id="main">
+  <div id="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="openSidebar()"><svg viewBox="0 0 24 24" fill="none" stroke="var(--carbon)" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div class="topbar-title">Grades &amp; Reports</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn btn-ghost btn-sm" id="print-btn" onclick="printReports()" style="display:none">🖨️ Print Reports</button>
+      <button class="btn btn-green btn-sm" id="save-btn" onclick="saveGradesNow()" style="display:none">💾 Save Grades</button>
+    </div>
+  </div>
+  <div id="content">
+    <!-- CONTROL BAR -->
+    <div class="card" style="margin-bottom:16px" id="ctrl-bar">
+      <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
+        <div class="field" style="flex:1;min-width:180px;margin-bottom:0">
+          <label class="fl">Class</label>
+          <select class="fi" id="cls-sel"><option value="">Select class…</option></select>
+        </div>
+        <div class="field" style="width:140px;margin-bottom:0">
+          <label class="fl">Subject</label>
+          <select class="fi" id="sub-sel"><option value="">All Subjects</option></select>
+        </div>
+        <div class="field" style="width:130px;margin-bottom:0">
+          <label class="fl">Term</label>
+          <select class="fi" id="term-sel"></select>
+        </div>
+        <div><div class="fl" style="margin-bottom:6px">&nbsp;</div><button class="btn btn-ghost" onclick="loadGrades()">Load →</button></div>
+      </div>
+    </div>
+    <div id="grades-box"><div class="empty-state"><div class="empty-icon">📝</div><div class="empty-title">Select a class and term</div><div class="empty-sub">Then click Load to enter or view grades</div></div></div>
+  </div>
+</div>
+
+<!-- REPORT PREVIEW MODAL -->
+<div class="modal-overlay" id="report-modal" onclick="if(event.target===this)closeReport()">
+  <div class="modal" style="max-width:740px;padding:0;overflow:hidden">
+    <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--white);position:sticky;top:0;z-index:1">
+      <div style="font-size:.88rem;font-weight:600">📄 Report Card Preview</div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-green btn-sm" onclick="window.print()">🖨️ Print</button>
+        <button class="btn btn-ghost btn-sm" onclick="closeReport()">✕ Close</button>
+      </div>
+    </div>
+    <div id="report-content" style="padding:20px;max-height:75vh;overflow-y:auto"></div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/firebase-config.js"></script><script src="/shared.js"></script><script src="/auth.js"></script><script src="/db.js"></script>
+<script>
+let PROF=null,STUDENTS=[],GRADE_MAP={},CUR_CLS='',CUR_SUB='',CUR_TERM='';
+
+(async()=>{
+  const {profile}=await requireAuth(['admin','teacher']);
+  await loadSchoolSettings();
+  PROF=profile;
+  document.getElementById('sb-av').textContent=getInitials(profile.name);
+  document.getElementById('sb-name').textContent=profile.name;
+  document.getElementById('sb-role').textContent=profile.role;
+  document.getElementById('sb-school').textContent=SCHOOL.name;
+  document.getElementById('sb-term').textContent=`${SCHOOL.term} · ${SCHOOL.year}`;
+  if(profile.role!=='admin'){const _rl=document.getElementById('demoreset-link');if(_rl)_rl.style.display='none';const _el=document.getElementById('export-link');if(_el)_el.style.display='none';const _sl=document.getElementById('settings-link');if(_sl)_sl.style.display='none';const _an=document.getElementById('admin-nav');if(_an)_an.style.display='none';}
+  // Build selects
+  const clsSel=document.getElementById('cls-sel');
+  const grps={};CLASSES.forEach(c=>{if(!grps[c.level])grps[c.level]=[];grps[c.level].push(c);});
+  Object.entries(grps).forEach(([lvl,cs])=>{const og=document.createElement('optgroup');og.label=lvl;cs.forEach(c=>{const op=document.createElement('option');op.value=c.key;op.textContent=c.label;og.appendChild(op);});clsSel.appendChild(og);});
+  document.getElementById('sub-sel').innerHTML='<option value="">All Subjects</option>'+SUBJECTS.map(s=>`<option value="${s.key}">${s.label}</option>`).join('');
+  document.getElementById('term-sel').innerHTML=['Term 1','Term 2','Term 3'].map(t=>`<option value="${t}"${t===SCHOOL.term?' selected':''}>${t}</option>`).join('');
+  // Handle ?student= URL
+  const urlStu=new URLSearchParams(location.search).get('student');
+  if(urlStu) viewStudentReport(urlStu);
+  // Handle ?action=report
+  if(new URLSearchParams(location.search).get('action')==='report' && SCHOOL.term){document.getElementById('term-sel').value=SCHOOL.term;}
+})();
+
+async function loadGrades(){
+  CUR_CLS=document.getElementById('cls-sel').value;
+  CUR_SUB=document.getElementById('sub-sel').value;
+  CUR_TERM=document.getElementById('term-sel').value;
+  if(!CUR_CLS||!CUR_TERM){showToast('Select a class and term','warn');return;}
+  document.getElementById('grades-box').innerHTML='<div class="loading-center">Loading…</div>';
+  document.getElementById('save-btn').style.display='none';
+  document.getElementById('print-btn').style.display='none';
+
+  const year=SCHOOL.year;
+  const level=CUR_CLS.startsWith('jhs')?'jhs':'primary';
+  const subjects=CUR_SUB?SUBJECTS.filter(s=>s.key===CUR_SUB):(level==='jhs'?SUBJECTS.filter(s=>['maths','english','science','social','ict','french','rme','creative','pe'].includes(s.key)):SUBJECTS.filter(s=>['maths','english','science','social','creative','rme','ghist','pe'].includes(s.key)));
+
+  [STUDENTS]=await Promise.all([getStudents({classKey:CUR_CLS})]);
+  const grades=await getClassGrades(CUR_CLS,CUR_TERM,year);
+  GRADE_MAP={};
+  grades.forEach(g=>{if(!GRADE_MAP[g.studentId])GRADE_MAP[g.studentId]={};GRADE_MAP[g.studentId][g.subjectKey]=g.score;});
+
+  if(!STUDENTS.length){document.getElementById('grades-box').innerHTML='<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No students</div><div class="empty-sub">No students in this class</div></div>';return;}
+
+  document.getElementById('save-btn').style.display='inline-flex';
+  document.getElementById('print-btn').style.display='inline-flex';
+
+  const clsLabel=getClassLabel(CUR_CLS);
+  document.getElementById('grades-box').innerHTML=`
+    <div class="card">
+      <div class="card-hd">
+        <span class="card-title">${clsLabel} — ${CUR_TERM} Grades</span>
+        <span style="font-size:.75rem;color:var(--carbon-soft)">${STUDENTS.length} students · ${subjects.length} subjects</span>
+      </div>
+      <div class="table-wrap">
+        <table class="grade-table">
+          <thead><tr>
+            <th style="min-width:160px">Student</th>
+            ${subjects.map(s=>`<th style="text-align:center;min-width:70px">${s.label.split(' ')[0]}</th>`).join('')}
+            <th style="text-align:center">Avg</th>
+            <th style="text-align:center">Grade</th>
+            <th></th>
+          </tr></thead>
+          <tbody>
+            ${STUDENTS.map(s=>{
+              const scores=subjects.map(sub=>GRADE_MAP[s.id]?.[sub.key]??'');
+              const filled=scores.filter(v=>v!=='');
+              const avg=filled.length?(filled.reduce((a,v)=>a+Number(v),0)/filled.length).toFixed(1):'—';
+              const avgNum=parseFloat(avg);
+              const gradeObj=!isNaN(avgNum)?getGrade(avgNum):{grade:'—',color:'var(--carbon-soft)'};
+              return`<tr>
+                <td><div style="font-weight:500">${s.firstName} ${s.lastName}</div><div style="font-size:.68rem;font-family:monospace;color:var(--carbon-soft)">${s.studentId}</div></td>
+                ${subjects.map(sub=>`<td style="text-align:center;padding:6px 8px">
+                  <input type="number" min="0" max="100" value="${GRADE_MAP[s.id]?.[sub.key]??''}" data-sid="${s.id}" data-sub="${sub.key}" data-name="${s.firstName} ${s.lastName}" oninput="onScoreInput(this)" style="width:56px;padding:5px 7px;border:1.5px solid var(--border-med);border-radius:var(--r-sm);font-family:var(--font-b);font-size:.84rem;text-align:center;outline:none;transition:border-color .13s" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border-med)'">
+                </td>`).join('')}
+                <td style="text-align:center;font-weight:700;color:${gradeObj.color}" class="avg-${s.id}">${avg}</td>
+                <td style="text-align:center"><span class="badge" style="background:${gradeObj.color}20;color:${gradeObj.color}" class="grd-${s.id}">${gradeObj.grade}</span></td>
+                <td><button class="btn btn-ghost btn-sm" onclick="previewReport('${s.id}')">📄</button></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function onScoreInput(input){
+  const sid=input.dataset.sid;
+  const sub=input.dataset.sub;
+  const val=parseFloat(input.value);
+  if(!GRADE_MAP[sid])GRADE_MAP[sid]={};
+  if(!isNaN(val)&&val>=0&&val<=100){GRADE_MAP[sid][sub]=val;input.style.borderColor='var(--green)';}
+  else{delete GRADE_MAP[sid][sub];input.style.borderColor=val?'var(--red)':'var(--border-med)';}
+  // Recompute average for this student row
+  const level=CUR_CLS.startsWith('jhs')?'jhs':'primary';
+  const subjects=level==='jhs'?['maths','english','science','social','ict','french','rme','creative','pe']:['maths','english','science','social','creative','rme','ghist','pe'];
+  const scores=subjects.map(s=>GRADE_MAP[sid]?.[s]).filter(v=>v!==undefined);
+  const avg=scores.length?(scores.reduce((a,v)=>a+v,0)/scores.length).toFixed(1):'—';
+  const grObj=avg!=='—'?getGrade(parseFloat(avg)):{grade:'—',color:'var(--carbon-soft)'};
+  document.querySelectorAll(`.avg-${sid}`).forEach(el=>{el.textContent=avg;el.style.color=grObj.color;});
+  document.querySelectorAll(`.grd-${sid}`).forEach(el=>{el.textContent=grObj.grade;el.style.background=grObj.color+'20';el.style.color=grObj.color;});
+}
+
+async function saveGradesNow(){
+  const btn=document.getElementById('save-btn');btn.disabled=true;btn.textContent='Saving…';
+  const year=SCHOOL.year;
+  const entries=[];
+  document.querySelectorAll('.grade-table input[type=number]').forEach(inp=>{
+    const v=parseFloat(inp.value);
+    if(!isNaN(v)&&v>=0&&v<=100){
+      const s=STUDENTS.find(x=>x.id===inp.dataset.sid);
+      entries.push({studentId:inp.dataset.sid,studentName:inp.dataset.name,classKey:CUR_CLS,subjectKey:inp.dataset.sub,score:v});
+    }
+  });
+  if(!entries.length){showToast('No scores to save','warn');btn.disabled=false;btn.textContent='💾 Save Grades';return;}
+  const res=await saveGrades(entries,CUR_TERM,year,PROF.uid||'');
+  btn.disabled=false;btn.textContent='💾 Save Grades';
+  if(res.success) showToast(`✓ ${entries.length} scores saved`,'ok');
+  else showToast(res.error||'Save failed','err');
+}
+
+async function previewReport(studentId){
+  const s=STUDENTS.find(x=>x.id===studentId);
+  if(!s)return;
+  const grades=await getStudentGrades(studentId,CUR_TERM,SCHOOL.year);
+  const att=await getStudentAttendance(studentId);
+  const attP=att.filter(a=>a.status==='present').length,attR=att.length?pct(attP,att.length):0;
+  const avg=grades.length?(grades.reduce((t,g)=>t+g.score,0)/grades.length).toFixed(1):'—';
+  const grObj=avg!=='—'?getGrade(parseFloat(avg)):{grade:'—',remark:'—'};
+  document.getElementById('report-content').innerHTML=buildReportCard(s,grades,attR,att.length,avg,grObj);
+  document.getElementById('report-modal').classList.add('open');
+}
+
+async function printReports(){
+  document.getElementById('report-content').innerHTML='<div class="loading-center">Preparing reports…</div>';
+  document.getElementById('report-modal').classList.add('open');
+  const html=[];
+  for(const s of STUDENTS){
+    const [grades,att]=await Promise.all([getStudentGrades(s.id,CUR_TERM,SCHOOL.year),getStudentAttendance(s.id)]);
+    const attP=att.filter(a=>a.status==='present').length,attR=att.length?pct(attP,att.length):0;
+    const avg=grades.length?(grades.reduce((t,g)=>t+g.score,0)/grades.length).toFixed(1):'—';
+    const grObj=avg!=='—'?getGrade(parseFloat(avg)):{grade:'—',remark:'—'};
+    html.push(buildReportCard(s,grades,attR,att.length,avg,grObj));
+  }
+  document.getElementById('report-content').innerHTML=html.join('');
+}
+
+function buildReportCard(s,grades,attRate,attDays,avg,grObj){
+  return`<div class="report-card">
+    <div class="rc-header">
+      <div class="rc-school">
+        <div class="rc-school-name">${SCHOOL.name}</div>
+        <div style="font-size:.78rem;color:#666;margin-top:2px">${SCHOOL.city} · ${SCHOOL.phone}</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:.72rem;color:#888;font-weight:600;letter-spacing:1px;text-transform:uppercase">Student Report Card</div>
+        <div style="font-size:.8rem;color:#1a6b3c;font-weight:600;margin-top:2px">${CUR_TERM} · ${SCHOOL.year}</div>
+      </div>
+    </div>
+    <div class="rc-info">
+      <div class="rc-info-item"><strong>${s.firstName} ${s.lastName}</strong></div>
+      <div class="rc-info-item">ID: <strong>${s.studentId}</strong></div>
+      <div class="rc-info-item">Class: <strong>${getClassLabel(s.classKey)}</strong></div>
+      <div class="rc-info-item">Attendance: <strong>${attRate}% (${attDays} days)</strong></div>
+    </div>
+    <table class="rc-subject-table">
+      <thead><tr><th>Subject</th><th style="text-align:center">Score</th><th style="text-align:center">Grade</th><th>Remark</th></tr></thead>
+      <tbody>
+        ${grades.map(g=>`<tr><td>${getSubjectLabel(g.subjectKey)}</td><td style="text-align:center;font-weight:700;color:${getGrade(g.score).color}">${g.score}%</td><td style="text-align:center"><strong style="color:${getGrade(g.score).color}">${g.grade}</strong></td><td style="color:#666">${g.remark}</td></tr>`).join('')}
+        <tr style="border-top:2px solid #1a6b3c"><td><strong>Overall Average</strong></td><td style="text-align:center;font-weight:700;color:${grObj.color}">${avg}%</td><td style="text-align:center"><strong style="color:${grObj.color}">${grObj.grade}</strong></td><td style="color:#1a6b3c;font-weight:600">${grObj.remark}</td></tr>
+      </tbody>
+    </table>
+    <div class="rc-footer">
+      <div class="rc-sign"><div class="rc-sign-line">Class Teacher</div></div>
+      <div class="rc-sign"><div class="rc-sign-line">Head Teacher</div></div>
+    </div>
+  </div>`;
+}
+
+async function viewStudentReport(studentId){
+  const s=await getStudentById(studentId);if(!s)return;
+  document.getElementById('cls-sel').value=s.classKey;
+  CUR_CLS=s.classKey;CUR_TERM=SCHOOL.term;
+  await previewReport(studentId);
+}
+
+function closeReport(){document.getElementById('report-modal').classList.remove('open');}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');}
+document.querySelectorAll('.hamburger').forEach(b=>b.onclick=()=>openSidebar());
+</script>
+<script>if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-bottom-nav">
+  <div class="mbn-items">
+    <a href="dashboard.html"  class="mbn-item "><span class="mbn-icon">📊</span>Home</a>
+    <a href="students.html"   class="mbn-item "><span class="mbn-icon">🎓</span>Students</a>
+    <a href="attendance.html" class="mbn-item "><span class="mbn-icon">📋</span>Attend.</a>
+    <a href="finance.html"    class="mbn-item "><span class="mbn-icon">💰</span>Finance</a>
+    <a href="#" class="mbn-item signout-btn" onclick="signOut();return false;"><span class="mbn-icon">🚪</span>Sign Out</a>
+  </div>
+</nav>
+
+</body>
+</html>

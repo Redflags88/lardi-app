@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lardi">
+<meta name="mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#1a6b3c">
+<title>Parent Portal — Lardi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/shared.css">
+<style>
+.parent-shell{display:flex;flex-direction:column;min-height:100vh}@media(min-width:961px){.parent-shell{flex-direction:row;height:100vh;overflow:hidden}}
+.parent-nav{width:260px;flex-shrink:0;background:var(--green-dark);display:flex;flex-direction:column;position:fixed;left:-100%;top:0;bottom:0;z-index:400;overflow-y:auto;transition:left .25s ease;-webkit-overflow-scrolling:touch}@media(min-width:961px){.parent-nav{position:relative;left:0;height:100vh}}
+.parent-main{flex:1;display:flex;flex-direction:column;min-height:100vh}@media(min-width:961px){.parent-main{height:100vh;overflow:hidden}}
+.grade-bar{height:7px;background:rgba(28,28,28,.08);border-radius:10px;overflow:hidden;margin-top:4px}
+.grade-fill{height:100%;border-radius:10px;background:var(--green-mid)}
+.att-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.acd{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:600}
+.acd-p{background:var(--green-light);color:var(--green)}
+.acd-a{background:var(--red-light);color:var(--red)}
+.acd-l{background:var(--amber-light);color:var(--amber)}
+.notice-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;border-left:4px solid var(--green);margin-bottom:10px}
+</style>
+</head>
+<body>
+<!-- PARENT NAV -->
+<div id="pnav-overlay" onclick="closeParentNav()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:399"></div>
+<nav class="parent-nav" id="parent-nav">
+  <div class="sidebar-logo"><div class="logo-mark"><div class="logo-pin" style="background:none;padding:0"><img src="/lardi-mark.png?v=3" style="width:36px;height:36px;object-fit:contain;border-radius:6px" alt="Lardi"></div><div><div class="logo-name">Lardi</div><div class="logo-sub" id="nav-school">Lardi Demo School</div></div></div></div>
+  <div class="sidebar-school"><div class="school-name">Parent Portal</div><div class="school-term" id="nav-term">Term 2</div></div>
+  <div style="padding:16px 12px">
+    <div style="background:rgba(255,255,255,.07);border-radius:12px;padding:14px">
+      <div class="user-av" style="margin:0 auto 10px;width:44px;height:44px;font-size:1rem" id="p-av">?</div>
+      <div style="font-size:.86rem;font-weight:600;color:#fff;text-align:center" id="p-name">Loading…</div>
+      <div style="font-size:.7rem;color:rgba(255,255,255,.4);text-align:center;margin-top:2px">Parent</div>
+    </div>
+  </div>
+  <div class="nav-section">My Child</div>
+  <div id="child-list" style="padding:0 8px 8px"></div>
+  <div class="nav-section">Info</div>
+  <a href="#announcements" class="nav-item" onclick="showSection('announcements')"><span class="nav-icon">📢</span> Announcements</a>
+  <div class="sidebar-bottom">
+    <div class="sidebar-signout" onclick="signOut()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign out</div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="parent-main">
+  <div id="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="openParentNav()"><svg viewBox="0 0 24 24" fill="none" stroke="var(--carbon)" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <div class="topbar-title" id="page-title">Parent Portal</div>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-badge" id="topbar-badge">Loading…</span>
+    </div>
+  </div>
+  <div id="content" style="flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px;padding-bottom:90px">
+    <div class="loading-center">Loading your child's information…</div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="/firebase-config.js"></script><script src="/shared.js"></script><script src="/auth.js"></script><script src="/db.js"></script>
+<script>
+let PROF=null,CHILDREN=[],CUR_CHILD=null;
+const TERM=SCHOOL.term,YEAR=SCHOOL.year;
+
+(async()=>{
+  const {profile}=await requireAuth(['parent','admin']);
+  PROF=profile;
+  document.getElementById('p-av').textContent=getInitials(profile.name);
+  document.getElementById('p-name').textContent=profile.name;
+  document.getElementById('nav-school').textContent=SCHOOL.name;
+  document.getElementById('nav-term').textContent=`${SCHOOL.term} · ${SCHOOL.year}`;
+
+  // Find children linked to this parent email
+  const email=profile.email;
+  const snap=await db.collection('students').where('parentEmail','==',email).get();
+  CHILDREN=snap.docs.map(d=>({id:d.id,...d.data()}));
+
+  if(!CHILDREN.length){
+    // Try linking by parent name for demo
+    // Demo fallback — use first 2 real seeded students
+    const _d1=await db.collection('students').doc('GA-2024-0001').get();
+    const _d2=await db.collection('students').doc('GA-2024-0002').get();
+    CHILDREN=[_d1,_d2].filter(d=>d.exists).map(d=>({id:d.id,...d.data()}));
+  }
+
+  const childNav=document.getElementById('child-list');
+  if(CHILDREN.length){
+    childNav.innerHTML=CHILDREN.map((c,i)=>`
+      <div class="nav-item" id="c-nav-${i}" onclick="loadChild('${c.id}',${i})" style="cursor:pointer">
+        <span class="nav-icon">🎓</span> ${c.firstName} ${c.lastName}
+      </div>`).join('');
+    loadChild(CHILDREN[0].id,0);
+  } else {
+    document.getElementById('content').innerHTML='<div class="empty-state"><div class="empty-icon">👦</div><div class="empty-title">No children linked</div><div class="empty-sub">Contact the school office to link your account to your child\'s records.</div></div>';
+  }
+})();
+
+async function loadChild(childId,navIdx){
+  CUR_CHILD=childId;
+  document.querySelectorAll('#child-list .nav-item').forEach((el,i)=>el.classList.toggle('active',i===navIdx));
+  document.getElementById('content').innerHTML='<div class="loading-center">Loading…</div>';
+  const [s,grades,att,pays]=await Promise.all([
+    getStudentById(childId),
+    getStudentGrades(childId,TERM,YEAR),
+    getStudentAttendance(childId),
+    getStudentPayments(childId,TERM,YEAR)
+  ]);
+  if(!s)return;
+  const attP=att.filter(a=>a.status==='present').length,attR=att.length?pct(attP,att.length):0;
+  const avg=grades.length?(grades.reduce((t,g)=>t+g.score,0)/grades.length).toFixed(1):null;
+  const paid=pays.reduce((t,p)=>t+p.amount,0),exp=s.classKey?.startsWith('jhs')?2400:2000;
+  document.getElementById('page-title').textContent=`${s.firstName}'s Dashboard`;
+  document.getElementById('topbar-badge').textContent=getClassLabel(s.classKey);
+  const cal=att.slice(0,21).map(a=>`<div class="acd ${a.status==='present'?'acd-p':a.status==='absent'?'acd-a':'acd-l'}" title="${a.date}">${a.date.slice(8)}</div>`).join('');
+  document.getElementById('content').innerHTML=`
+    <!-- OVERVIEW STATS -->
+    <div class="stat-grid" style="margin-bottom:20px">
+      <div class="stat-card"><div class="stat-icon si-green">📋</div><div class="stat-label">Attendance Rate</div><div class="stat-value">${attR}%</div><div class="stat-sub ${attR>=80?'up':'down'}">${attR>=80?'Excellent':'Needs improvement'}</div></div>
+      <div class="stat-card"><div class="stat-icon si-blue">📝</div><div class="stat-label">Average Score</div><div class="stat-value">${avg||'—'}${avg?'%':''}</div><div class="stat-sub neutral">${TERM}</div></div>
+      <div class="stat-card"><div class="stat-icon si-gold">💰</div><div class="stat-label">Fees Paid</div><div class="stat-value" style="font-size:1.4rem">${fmtGHS(paid)}</div><div class="stat-sub ${paid>=exp?'up':'down'}">of ${fmtGHS(exp)}</div></div>
+      <div class="stat-card"><div class="stat-icon ${paid>=exp?'si-green':'si-red'}">${paid>=exp?'✅':'⚠️'}</div><div class="stat-label">Fee Balance</div><div class="stat-value" style="font-size:1.4rem;color:${paid>=exp?'var(--green)':'var(--red)'}">${paid>=exp?'Nil':fmtGHS(exp-paid)}</div><div class="stat-sub ${paid>=exp?'up':'down'}">${paid>=exp?'Fully paid':'Outstanding'}</div></div>
+    </div>
+
+    <div class="row-2">
+      <!-- GRADES -->
+      <div class="card">
+        <div class="card-hd"><span class="card-title">📝 Grades — ${TERM}</span>${avg?`<span style="font-size:.88rem;font-weight:700;color:${getGrade(parseFloat(avg)).color}">${avg}% · ${getGrade(parseFloat(avg)).grade}</span>`:''}</div>
+        ${grades.length?grades.map(g=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(28,28,28,.04)">
+          <span style="font-size:.84rem;color:var(--carbon-mid)">${getSubjectLabel(g.subjectKey)}</span>
+          <div style="text-align:right;min-width:80px">
+            <span style="font-size:.84rem;font-weight:700;color:${getGrade(g.score).color}">${g.score}%</span>
+            <span class="badge" style="margin-left:6px;background:${getGrade(g.score).color}20;color:${getGrade(g.score).color}">${g.grade}</span>
+            <div class="grade-bar"><div class="grade-fill" style="width:${g.score}%;background:${getGrade(g.score).color}"></div></div>
+          </div>
+        </div>`).join('')
+        :'<div style="color:var(--carbon-soft);font-size:.82rem;text-align:center;padding:20px">No grades entered yet for this term</div>'}
+      </div>
+      <!-- ATTENDANCE + FEES -->
+      <div>
+        <div class="card" style="margin-bottom:16px">
+          <div class="card-hd"><span class="card-title">📋 Attendance</span><span style="font-size:.88rem;font-weight:700;color:${attR>=80?'var(--green)':'var(--red)'}">${attR}%</span></div>
+          <div style="display:flex;gap:16px;margin-bottom:12px">
+            <div style="text-align:center"><div style="font-size:1.3rem;font-weight:700;color:var(--green)">${attP}</div><div style="font-size:.68rem;color:var(--carbon-soft)">Present</div></div>
+            <div style="text-align:center"><div style="font-size:1.3rem;font-weight:700;color:var(--red)">${att.filter(a=>a.status==='absent').length}</div><div style="font-size:.68rem;color:var(--carbon-soft)">Absent</div></div>
+            <div style="text-align:center"><div style="font-size:1.3rem;font-weight:700;color:var(--amber)">${att.filter(a=>a.status==='late').length}</div><div style="font-size:.68rem;color:var(--carbon-soft)">Late</div></div>
+          </div>
+          <div class="att-cal">${cal||'<span style="color:var(--carbon-soft);font-size:.78rem">No records yet</span>'}</div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><span class="card-title">💰 Fee Payments</span></div>
+          ${pays.length?pays.map(p=>`<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(28,28,28,.04);font-size:.82rem"><span style="color:var(--carbon-soft)">${formatDate(p.paidAt)}</span><span style="font-weight:600;color:var(--green)">${fmtGHS(p.amount)} <span style="font-weight:400;color:var(--carbon-soft)">· ${p.method}</span></span></div>`).join('')
+          :'<div style="color:var(--carbon-soft);font-size:.82rem;text-align:center;padding:16px">No payments recorded yet</div>'}
+          <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:.84rem">
+            <span>Total Paid</span><strong style="color:var(--green)">${fmtGHS(paid)}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="card" style="margin-top:16px">
+      <div class="card-hd"><span class="card-title">👤 Student Profile</span></div>
+      <div class="row-2">
+        <div>
+          ${ri('Full Name',`${s.firstName} ${s.lastName}`)}${ri('Student ID',s.studentId)}${ri('Class',getClassLabel(s.classKey))}${ri('Gender',s.gender)}${ri('Date of Birth',s.dob||'—')}
+        </div>
+        <div>
+          ${ri('School',SCHOOL.name)}${ri('Term',`${TERM} · ${YEAR}`)}${ri('Address',s.address||'—')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function ri(k,v){return`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:.83rem;border-bottom:1px solid rgba(28,28,28,.04)"><span style="color:var(--carbon-soft)">${k}</span><span style="font-weight:500">${v||'—'}</span></div>`;}
+function showSection(s){if(s==='announcements')loadAnnouncements();}
+
+async function loadAnnouncements(){
+  document.getElementById('content').innerHTML='<div class="loading-center">Loading announcements…</div>';
+  document.getElementById('page-title').textContent='Announcements';
+  document.getElementById('topbar-badge').textContent=SCHOOL.name;
+  const anns=await getAnnouncements(20);
+  const PRI={normal:'#1565C0',info:'#0F6E56',warn:'#D97706',alert:'#DC2626'};
+const PRI_LBL={normal:'🔵 Normal',info:'🟢 Info',warn:'🟡 Warning',alert:'🔴 Alert'};
+  document.getElementById('content').innerHTML=anns.length?anns.map(a=>`
+    <div class="notice-card" style="border-left-color:${PRI[a.priority]||PRI.normal}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:.88rem;font-weight:600;color:var(--carbon)">${a.title}</span>
+        <span class="badge" style="background:${PRI[a.priority]||PRI.normal}20;color:${PRI[a.priority]||PRI.normal};font-size:.65rem">${(a.priority||'normal').toUpperCase()}</span>
+        <span style="font-size:.72rem;color:var(--carbon-soft);margin-left:auto">${formatDate(a.createdAt)}</span>
+      </div>
+      <div style="font-size:.82rem;color:var(--carbon-mid);line-height:1.65">${a.body}</div>
+    </div>`).join('')
+  :'<div class="empty-state"><div class="empty-icon">📢</div><div class="empty-title">No announcements</div><div class="empty-sub">Check back soon</div></div>';
+}
+
+function openParentNav(){
+  document.getElementById('parent-nav').style.left='0';
+  document.getElementById('pnav-overlay').style.display='block';
+}
+function closeParentNav(){
+  document.getElementById('parent-nav').style.left='-100%';
+  document.getElementById('pnav-overlay').style.display='none';
+}
+</script>
+<script>if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mobile-bottom-nav">
+  <div class="mbn-items">
+    <a href="#" class="mbn-item active" onclick="loadChild(CHILDREN[0]?.id,0);return false;"><span class="mbn-icon">🏠</span>Overview</a>
+    <a href="#" class="mbn-item" onclick="showSection('announcements');return false;"><span class="mbn-icon">📢</span>Notices</a>
+    <a href="#" class="mbn-item signout-btn" onclick="signOut();return false;"><span class="mbn-icon">🚪</span>Sign Out</a>
+  </div>
+</nav>
+
+</body>
+</html>

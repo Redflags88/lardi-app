@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#1a6b3c">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Lardi">
-<meta name="mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#1a6b3c">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <title>Attendance — Lardi</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared.css">
 <script src="/school.config.js"></script>
@@ -25,7 +28,6 @@
 .att-btn-p{background:var(--green-light);color:var(--green);border-color:rgba(26,107,60,.2)}
 .att-btn-a{background:var(--red-light);color:var(--red);border-color:rgba(220,38,38,.2)}
 .att-btn-l{background:var(--amber-light);color:var(--amber);border-color:rgba(217,119,6,.2)}
-.att-btn-n{background:var(--cream);color:var(--carbon-soft);border-color:var(--border-med)}
 .att-btn:hover{opacity:.75}
 .att-btn.selected{box-shadow:0 0 0 2.5px currentColor}
 .summary-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
@@ -37,32 +39,55 @@
 </style>
 </head>
 <body>
+
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 <nav id="sidebar">
-  <div class="sidebar-logo"><div class="logo-mark"><div class="logo-pin" style="background:none;padding:0"><img src="/lardi-mark.png?v=3" style="width:36px;height:36px;object-fit:contain;border-radius:6px" alt="Lardi"></div><div><div class="logo-name">Lardi</div><div class="logo-sub">School Management</div></div></div></div>
-  <div class="sidebar-school"><div class="school-name" id="sb-school">Lardi Demo School</div><div class="school-term" id="sb-term">—</div></div>
-  <div class="nav-section">Main</div><a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
+  <div class="sidebar-logo">
+    <div class="logo-mark">
+      <div class="logo-pin" style="background:none;padding:0"><img src="/lardi-mark.png" style="width:36px;height:36px;object-fit:contain;border-radius:6px" alt="Lardi"></div>
+      <div><div class="logo-name">Lardi</div><div class="logo-sub">School Management</div></div>
+    </div>
+  </div>
+  <div class="sidebar-school">
+    <div class="school-name" id="sb-school">—</div>
+    <div class="school-term" id="sb-term">—</div>
+  </div>
+  <div class="nav-section">Main</div>
+  <a href="dashboard.html"  class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
   <div class="nav-section">Academic</div>
-  <a href="students.html" class="nav-item"><span class="nav-icon">🎓</span> Students</a>
+  <a href="students.html"   class="nav-item"><span class="nav-icon">🎓</span> Students</a>
   <a href="attendance.html" class="nav-item active"><span class="nav-icon">📋</span> Attendance</a>
-  <a href="grades.html" class="nav-item"><span class="nav-icon">📝</span> Grades &amp; Reports</a>
-  <a href="timetable.html" class="nav-item"><span class="nav-icon">🗓️</span> Timetable</a>
+  <a href="grades.html"     class="nav-item"><span class="nav-icon">📝</span> Grades &amp; Reports</a>
+  <a href="timetable.html"  class="nav-item"><span class="nav-icon">🗓️</span> Timetable</a>
   <div class="nav-section">Operations</div>
-  <a href="staff.html" class="nav-item"><span class="nav-icon">👨‍🏫</span> Staff</a>
+  <a href="staff.html"   class="nav-item"><span class="nav-icon">👨‍🏫</span> Staff</a>
   <a href="finance.html" class="nav-item"><span class="nav-icon">💰</span> Finance &amp; Fees</a>
   <a href="library.html" class="nav-item"><span class="nav-icon">📚</span> Library</a>
-  <a href="comms.html" class="nav-item"><span class="nav-icon">💬</span> Communication</a>
-  <div class="nav-section" id="admin-nav">Admin</div><a href="export.html" class="nav-item" id="export-link"><span class="nav-icon">💾</span> Export Data</a>
-  <a href="/demo-reset.html" class="nav-item" id="demoreset-link"><span class="nav-icon">🔄</span> Reset Demo</a>
+  <a href="comms.html"   class="nav-item"><span class="nav-icon">💬</span> Communication</a>
+  <div class="nav-section" id="admin-nav">Admin</div>
+  <a href="export.html"     class="nav-item" id="export-link"><span class="nav-icon">💾</span> Export Data</a>
+  <a href="demo-reset.html" class="nav-item" id="demoreset-link"><span class="nav-icon">🔄</span> Reset Demo</a>
   <div class="sidebar-bottom">
-    <div class="user-card"><div class="user-av" id="sb-av">?</div><div><div class="user-name" id="sb-name">Loading…</div><div class="user-role" id="sb-role">—</div></div></div>
-    <div class="sidebar-signout" onclick="signOut()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign out</div>
+    <div class="user-card">
+      <div class="user-av" id="sb-av">?</div>
+      <div><div class="user-name" id="sb-name">Loading…</div><div class="user-role" id="sb-role">—</div></div>
+    </div>
+    <div class="sidebar-signout" onclick="signOut()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg> Sign out
+    </div>
   </div>
 </nav>
+
 <div id="main">
   <div id="topbar">
     <div class="topbar-left">
-      <button class="hamburger" onclick="openSidebar()"><svg viewBox="0 0 24 24" fill="none" stroke="var(--carbon)" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+      <button class="hamburger" onclick="openSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--carbon)" stroke-width="2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
       <div class="topbar-title">Attendance</div>
     </div>
     <div class="topbar-right">
@@ -70,13 +95,17 @@
       <button class="btn btn-green btn-sm" id="save-btn" onclick="saveAtt()" style="display:none">💾 Save Attendance</button>
     </div>
   </div>
+
   <div id="content">
+
     <!-- SELECTOR BAR -->
     <div class="card" style="margin-bottom:16px">
       <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
         <div class="field" style="flex:1;min-width:180px;margin-bottom:0">
           <label class="fl">Class</label>
-          <select class="fi" id="cls-sel" onchange="onClassChange()"><option value="">Select class…</option></select>
+          <select class="fi" id="cls-sel" onchange="onClassChange()">
+            <option value="">Select class…</option>
+          </select>
         </div>
         <div class="field" style="width:180px;margin-bottom:0">
           <label class="fl">Date</label>
@@ -91,10 +120,10 @@
 
     <!-- SUMMARY CARDS -->
     <div class="summary-bar" id="summary" style="display:none">
-      <div class="sum-card"><div class="sum-num" id="s-total" style="color:var(--carbon)">0</div><div class="sum-lbl">Total</div></div>
+      <div class="sum-card"><div class="sum-num" id="s-total"   style="color:var(--carbon)">0</div><div class="sum-lbl">Total</div></div>
       <div class="sum-card"><div class="sum-num" id="s-present" style="color:var(--green)">0</div><div class="sum-lbl">Present</div></div>
-      <div class="sum-card"><div class="sum-num" id="s-absent" style="color:var(--red)">0</div><div class="sum-lbl">Absent</div></div>
-      <div class="sum-card"><div class="sum-num" id="s-late" style="color:var(--amber)">0</div><div class="sum-lbl">Late</div></div>
+      <div class="sum-card"><div class="sum-num" id="s-absent"  style="color:var(--red)">0</div><div class="sum-lbl">Absent</div></div>
+      <div class="sum-card"><div class="sum-num" id="s-late"    style="color:var(--amber)">0</div><div class="sum-lbl">Late</div></div>
     </div>
 
     <!-- BULK MARK BAR -->
@@ -106,197 +135,196 @@
     </div>
 
     <!-- STUDENT LIST -->
-    <div id="att-list"><div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Select a class and date</div><div class="empty-sub">Then click Load to begin marking attendance</div></div></div>
+    <div id="att-list">
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">Select a class and date</div>
+        <div class="empty-sub">Then click Load to begin marking attendance</div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="/firebase-config.js"></script><script src="/shared.js"></script><script src="/auth.js"></script><script src="/db.js"></script>
+<script src="/firebase-config.js"></script>
+<script src="/shared.js"></script>
+<script src="/auth.js"></script>
+<script src="/db.js"></script>
 <script>
-let PROF=null,STUDENTS=[],ATT_MAP={},STATUS_MAP={};
+let PROF = null, STUDENTS = [], ATT_MAP = {}, STATUS_MAP = {};
 
-(async()=>{
-  const {profile}=await requireAuth(['admin','teacher']);
-  await loadSchoolSettings();
-  PROF=profile;
-  document.getElementById('sb-av').textContent=getInitials(profile.name);
-  document.getElementById('sb-name').textContent=profile.name;
-  document.getElementById('sb-role').textContent=profile.role;
-  document.getElementById('sb-school').textContent=SCHOOL.name;
-  document.getElementById('sb-term').textContent=`${SCHOOL.term} · ${SCHOOL.year}`;
-  if(profile.role!=='admin'){const _rl=document.getElementById('demoreset-link');if(_rl)_rl.style.display='none';const _el=document.getElementById('export-link');if(_el)_el.style.display='none';const _sl=document.getElementById('settings-link');if(_sl)_sl.style.display='none';const _an=document.getElementById('admin-nav');if(_an)_an.style.display='none';}
-  // Build class select
-  const sel=document.getElementById('cls-sel');
-  sel.innerHTML='<option value="">Select class…</option>';
-  const groups={};
-  CLASSES.forEach(c=>{if(!groups[c.level])groups[c.level]=[];groups[c.level].push(c);});
-  Object.entries(groups).forEach(([lvl,cs])=>{
-    const og=document.createElement('optgroup');og.label=lvl;
-    cs.forEach(c=>{const op=document.createElement('option');op.value=c.key;op.textContent=c.label;og.appendChild(op);});
-    sel.appendChild(og);
-  });
-  // Set today's date
-  document.getElementById('date-sel').value=todayStr();
-  // Handle ?class= from URL
-  const urlCls=new URLSearchParams(location.search).get('class');
-  if(urlCls){sel.value=urlCls;loadAtt();}
+(async () => {
+  try {
+    const { profile } = await requireAuth(['admin','teacher']);
+    await loadSchoolSettings();
+    PROF = profile;
+
+    document.getElementById('sb-av').textContent     = getInitials(profile.name);
+    document.getElementById('sb-name').textContent   = profile.name;
+    document.getElementById('sb-role').textContent   = profile.role;
+    document.getElementById('sb-school').textContent = SCHOOL.name;
+    document.getElementById('sb-term').textContent   = `${SCHOOL.term} · ${SCHOOL.year}`;
+
+    if (profile.role !== 'admin') {
+      ['demoreset-link','export-link','settings-link','admin-nav'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.style.display = 'none';
+      });
+    }
+
+    // Build class dropdown from CLASSES array (with optgroups by level)
+    const sel    = document.getElementById('cls-sel');
+    const groups = {};
+    CLASSES.forEach(c => {
+      if (!groups[c.level]) groups[c.level] = [];
+      groups[c.level].push(c);
+    });
+    Object.entries(groups).forEach(([lvl, cs]) => {
+      const og = document.createElement('optgroup');
+      og.label = lvl;
+      cs.forEach(c => {
+        const op = document.createElement('option');
+        op.value = c.key; op.textContent = c.label;
+        og.appendChild(op);
+      });
+      sel.appendChild(og);
+    });
+
+    // Default to today
+    document.getElementById('date-sel').value = todayStr();
+
+    // Handle ?class= URL param
+    const urlCls = new URLSearchParams(location.search).get('class');
+    if (urlCls) { sel.value = urlCls; loadAtt(); }
+
+  } catch (err) {
+    console.error('Init error:', err);
+  }
 })();
 
-function onClassChange(){
-  const cls=document.getElementById('cls-sel').value;
-  if(cls) loadAtt();
+function onClassChange() {
+  const cls = document.getElementById('cls-sel').value;
+  if (cls) loadAtt();
 }
 
-async function loadAtt(){
-  const cls=document.getElementById('cls-sel').value;
-  const date=document.getElementById('date-sel').value;
-  if(!cls||!date){showToast('Select a class and date','warn');return;}
-  document.getElementById('att-list').innerHTML='<div class="loading-center">Loading…</div>';
-  document.getElementById('summary').style.display='none';
-  document.getElementById('bulk-bar').style.display='none';
-  document.getElementById('save-btn').style.display='none';
+async function loadAtt() {
+  const cls  = document.getElementById('cls-sel').value;
+  const date = document.getElementById('date-sel').value;
+  if (!cls || !date) { showToast('Select a class and date', 'warn'); return; }
 
-  [STUDENTS,ATT_MAP]=await Promise.all([getStudents({classKey:cls}),getAttendance(cls,date)]);
-  STATUS_MAP={};
-  STUDENTS.forEach(s=>{STATUS_MAP[s.id]=ATT_MAP[s.id]?.status||null;});
+  document.getElementById('att-list').innerHTML    = '<div class="loading-center">Loading…</div>';
+  document.getElementById('summary').style.display = 'none';
+  document.getElementById('bulk-bar').style.display = 'none';
+  document.getElementById('save-btn').style.display = 'none';
 
-  if(!STUDENTS.length){document.getElementById('att-list').innerHTML='<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">No students in this class</div><div class="empty-sub">Add students first</div></div>';return;}
+  // getStudents() now fetches ALL documents — no status filter — then filters by classKey in memory
+  [STUDENTS, ATT_MAP] = await Promise.all([
+    getStudents({ classKey: cls }),
+    getAttendance(cls, date),
+  ]);
 
-  const cls_label=getClassLabel(cls);
-  document.getElementById('att-badge').textContent=`${cls_label} · ${date}`;
-  document.getElementById('save-btn').style.display='inline-flex';
-  document.getElementById('summary').style.display='grid';
-  document.getElementById('bulk-bar').style.display='flex';
+  STATUS_MAP = {};
+  STUDENTS.forEach(s => { STATUS_MAP[s.id] = ATT_MAP[s.id]?.status || null; });
+
+  if (!STUDENTS.length) {
+    document.getElementById('att-list').innerHTML =
+      '<div class="empty-state"><div class="empty-icon">👥</div>' +
+      '<div class="empty-title">No students in this class</div>' +
+      '<div class="empty-sub">Add students on the Students page first</div></div>';
+    return;
+  }
+
+  document.getElementById('att-badge').textContent      = `${getClassLabel(cls)} · ${date}`;
+  document.getElementById('save-btn').style.display     = 'inline-flex';
+  document.getElementById('summary').style.display      = 'grid';
+  document.getElementById('bulk-bar').style.display     = 'flex';
   renderList();
 }
 
-function renderList(){
+function renderList() {
   updateSummary();
-  const html=STUDENTS.map((s,i)=>{
-    const st=STATUS_MAP[s.id];
-    const bp=`att-btn att-btn-p${st==='present'?' selected':''}`;
-    const ba=`att-btn att-btn-a${st==='absent'?' selected':''}`;
-    const bl=`att-btn att-btn-l${st==='late'?' selected':''}`;
-    return`<div class="att-student-row" id="row-${s.id}">
+  const html = STUDENTS.map(s => {
+    const st = STATUS_MAP[s.id];
+    return `<div class="att-student-row" id="row-${s.id}">
       <div class="av av-green">${getInitials(s.firstName+' '+s.lastName)}</div>
-      <div style="flex:1"><div class="att-name">${s.firstName} ${s.lastName}</div><div class="att-id">${s.studentId}</div></div>
+      <div style="flex:1">
+        <div class="att-name">${s.firstName} ${s.lastName}</div>
+        <div class="att-id">${s.studentId||s.id}</div>
+      </div>
       <div class="att-btns">
-        <button class="${bp}" onclick="setStatus('${s.id}','present',this)">✅ P</button>
-        <button class="${ba}" onclick="setStatus('${s.id}','absent',this)">❌ A</button>
-        <button class="${bl}" onclick="setStatus('${s.id}','late',this)">🕐 L</button>
+        <button class="att-btn att-btn-p${st==='present'?' selected':''}" onclick="setStatus('${s.id}','present',this)">✅ P</button>
+        <button class="att-btn att-btn-a${st==='absent'?' selected':''}"  onclick="setStatus('${s.id}','absent',this)">❌ A</button>
+        <button class="att-btn att-btn-l${st==='late'?' selected':''}"   onclick="setStatus('${s.id}','late',this)">🕐 L</button>
       </div>
     </div>`;
   }).join('');
-  document.getElementById('att-list').innerHTML=`<div class="card" style="padding:0;overflow:hidden">${html}</div>`;
+  document.getElementById('att-list').innerHTML =
+    `<div class="card" style="padding:0;overflow:hidden">${html}</div>`;
 }
 
-function setStatus(id,status,btn){
-  STATUS_MAP[id]=STATUS_MAP[id]===status?null:status;
-  // Update button states in that row
-  const row=document.getElementById(`row-${id}`);
-  row.querySelectorAll('.att-btn').forEach(b=>b.classList.remove('selected'));
-  if(STATUS_MAP[id]) btn.classList.add('selected');
+function setStatus(id, status, btn) {
+  STATUS_MAP[id] = STATUS_MAP[id] === status ? null : status;
+  const row = document.getElementById(`row-${id}`);
+  row.querySelectorAll('.att-btn').forEach(b => b.classList.remove('selected'));
+  if (STATUS_MAP[id]) btn.classList.add('selected');
   updateSummary();
 }
 
-function markAll(status){
-  STUDENTS.forEach(s=>STATUS_MAP[s.id]=status);
+function markAll(status) {
+  STUDENTS.forEach(s => { STATUS_MAP[s.id] = status; });
   renderList();
 }
 
-function updateSummary(){
-  const vals=Object.values(STATUS_MAP);
-  const present=vals.filter(v=>v==='present').length;
-  const absent=vals.filter(v=>v==='absent').length;
-  const late=vals.filter(v=>v==='late').length;
-  document.getElementById('s-total').textContent=STUDENTS.length;
-  document.getElementById('s-present').textContent=present;
-  document.getElementById('s-absent').textContent=absent;
-  document.getElementById('s-late').textContent=late;
+function updateSummary() {
+  const vals    = Object.values(STATUS_MAP);
+  const present = vals.filter(v=>v==='present').length;
+  const absent  = vals.filter(v=>v==='absent').length;
+  const late    = vals.filter(v=>v==='late').length;
+  document.getElementById('s-total').textContent   = STUDENTS.length;
+  document.getElementById('s-present').textContent = present;
+  document.getElementById('s-absent').textContent  = absent;
+  document.getElementById('s-late').textContent    = late;
 }
 
-async function saveAtt(){
-  const cls=document.getElementById('cls-sel').value;
-  const date=document.getElementById('date-sel').value;
-  const records=STUDENTS.filter(s=>STATUS_MAP[s.id]).map(s=>({studentId:s.id,studentName:`${s.firstName} ${s.lastName}`,status:STATUS_MAP[s.id],note:''}));
-  if(!records.length){showToast('No attendance marked yet','warn');return;}
-  const btn=document.getElementById('save-btn');btn.disabled=true;btn.textContent='Saving…';
-  const res=await saveAttendance(records,cls,date,PROF.uid||'');
-  btn.disabled=false;btn.textContent='💾 Save Attendance';
-  if(res.success) showToast(`✓ Attendance saved for ${res.count} students`,'ok');
-  else showToast(res.error||'Save failed','err');
+async function saveAtt() {
+  const cls     = document.getElementById('cls-sel').value;
+  const date    = document.getElementById('date-sel').value;
+  const records = STUDENTS
+    .filter(s => STATUS_MAP[s.id])
+    .map(s => ({
+      studentId:   s.id,
+      studentName: `${s.firstName} ${s.lastName}`,
+      status:      STATUS_MAP[s.id],
+      note:        '',
+    }));
+
+  if (!records.length) { showToast('No attendance marked yet', 'warn'); return; }
+
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const res = await saveAttendance(records, cls, date, PROF.uid||'');
+
+  btn.disabled = false; btn.textContent = '💾 Save Attendance';
+
+  if (res.success) showToast(`✓ Attendance saved for ${res.count} students`, 'ok');
+  else             showToast(res.error || 'Save failed', 'err');
 }
-function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');}
-function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');}
-document.querySelectorAll('.hamburger').forEach(b=>b.onclick=()=>openSidebar());
+
+function openSidebar() { document.getElementById('sidebar').classList.add('open');    document.getElementById('sidebar-overlay').classList.add('open'); }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); }
 </script>
 
-<!-- PWA Install Prompt -->
-<div id="pwa-banner" style="display:none;position:fixed;bottom:80px;left:12px;right:12px;background:var(--green-dark);color:#fff;border-radius:16px;padding:14px 16px;z-index:999;box-shadow:0 8px 32px rgba(0,0,0,.25);display:none;align-items:center;gap:12px;max-width:420px;margin:0 auto">
-  <div style="font-size:1.6rem;flex-shrink:0">📱</div>
-  <div style="flex:1;min-width:0">
-    <div style="font-size:.86rem;font-weight:700;color:#fff;margin-bottom:2px">Install Lardi</div>
-    <div style="font-size:.74rem;color:rgba(255,255,255,.65)">Add to your home screen for quick access</div>
-  </div>
-  <div style="display:flex;gap:6px;flex-shrink:0">
-    <button onclick="installPWA()" style="background:var(--gold);color:#fff;border:none;border-radius:8px;padding:7px 12px;font-family:var(--font-b);font-size:.78rem;font-weight:700;cursor:pointer">Install</button>
-    <button onclick="dismissPWA()" style="background:rgba(255,255,255,.15);color:#fff;border:none;border-radius:8px;padding:7px 10px;font-size:.78rem;cursor:pointer">✕</button>
-  </div>
-</div>
-
-<script>
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  // Show banner after 3 seconds if not already installed
-  if (!window.matchMedia('(display-mode: standalone)').matches) {
-    setTimeout(() => {
-      const banner = document.getElementById('pwa-banner');
-      if (banner && !localStorage.getItem('pwa-dismissed')) {
-        banner.style.display = 'flex';
-      }
-    }, 3000);
-  }
-});
-
-function installPWA() {
-  const banner = document.getElementById('pwa-banner');
-  if (banner) banner.style.display = 'none';
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(result => {
-      if (result.outcome === 'accepted') {
-        console.log('PWA installed');
-      }
-      deferredPrompt = null;
-    });
-  }
-}
-
-function dismissPWA() {
-  const banner = document.getElementById('pwa-banner');
-  if (banner) banner.style.display = 'none';
-  localStorage.setItem('pwa-dismissed', '1');
-}
-
-// Hide banner if already running as installed app
-if (window.matchMedia('(display-mode: standalone)').matches) {
-  const banner = document.getElementById('pwa-banner');
-  if (banner) banner.style.display = 'none';
-}
-</script>
 <script>if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script>
 
-<!-- MOBILE BOTTOM NAV -->
 <nav class="mobile-bottom-nav">
   <div class="mbn-items">
-    <a href="dashboard.html"  class="mbn-item "><span class="mbn-icon">📊</span>Home</a>
-    <a href="students.html"   class="mbn-item "><span class="mbn-icon">🎓</span>Students</a>
+    <a href="dashboard.html"  class="mbn-item"><span class="mbn-icon">📊</span>Home</a>
+    <a href="students.html"   class="mbn-item"><span class="mbn-icon">🎓</span>Students</a>
     <a href="attendance.html" class="mbn-item active"><span class="mbn-icon">📋</span>Attend.</a>
-    <a href="finance.html"    class="mbn-item "><span class="mbn-icon">💰</span>Finance</a>
+    <a href="finance.html"    class="mbn-item"><span class="mbn-icon">💰</span>Finance</a>
     <a href="#" class="mbn-item signout-btn" onclick="signOut();return false;"><span class="mbn-icon">🚪</span>Sign Out</a>
   </div>
 </nav>

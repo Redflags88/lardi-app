@@ -1,106 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#1a6b3c">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Lardi">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#1a6b3c"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Students — Lardi</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared.css">
-<script src="/school.config.js"></script>
-<script>(function(c){document.documentElement.style.setProperty('--green',c.color);var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=c.color;var a=document.querySelector('meta[name="apple-mobile-web-app-title"]');if(a)a.content=c.appName;})(SCHOOL_CONFIG);</script>
 <style>
 .stud-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.student-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;display:flex;align-items:center;gap:14px;transition:all .13s;cursor:pointer}
-.student-card:hover{border-color:var(--green-mid);box-shadow:0 3px 16px rgba(26,107,60,.08)}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px;display:flex;align-items:center;gap:14px;transition:all .13s;cursor:pointer}
+.sc:hover{border-color:var(--green-mid);box-shadow:var(--shadow-sm)}
 .sc-av{width:46px;height:46px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:1.05rem;font-weight:700;color:var(--green);flex-shrink:0}
 .sc-name{font-size:.9rem;font-weight:600;color:var(--carbon)}
 .sc-meta{font-size:.73rem;color:var(--carbon-soft);margin-top:2px}
 .sc-id{font-size:.68rem;font-family:monospace;color:var(--carbon-soft);margin-top:4px}
-.view-toggle{display:flex;border:1.5px solid var(--border-med);border-radius:var(--r-md);overflow:hidden}
-.vt-btn{padding:6px 10px;font-size:.82rem;color:var(--carbon-soft);background:none;border:none;cursor:pointer;transition:all .13s}
+.vt{display:flex;border:1.5px solid var(--border-med);border-radius:var(--r-md);overflow:hidden}
+.vt-btn{padding:6px 10px;font-size:.82rem;color:var(--carbon-soft);background:none;border:none;cursor:pointer}
 .vt-btn.active{background:var(--green);color:#fff}
-.drawer-overlay{position:fixed;inset:0;background:rgba(28,28,28,.4);z-index:300;display:none}
-.drawer-overlay.open{display:block}
-.drawer{position:fixed;right:0;top:0;bottom:0;width:460px;background:var(--white);z-index:301;overflow-y:auto;box-shadow:-8px 0 40px rgba(28,28,28,.12);transform:translateX(100%);transition:transform .25s ease}
-.drawer.open{transform:translateX(0)}
-.drawer-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;position:sticky;top:0;background:var(--white);z-index:1}
-.drawer-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-left:auto;transition:all .13s;font-size:.8rem}
-.drawer-close:hover{background:var(--red-light);border-color:var(--red);color:var(--red)}
-.drawer-body{padding:18px 22px}
-.dr-sec{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--border)}
-.dr-sec:last-child{border-bottom:none}
-.dr-lbl{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--carbon-soft);margin-bottom:10px}
-.ir{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:.83rem}
-.ir-k{color:var(--carbon-soft)}
-.ir-v{font-weight:500;color:var(--carbon);text-align:right;max-width:60%}
 .att-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:8px}
 .acd{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:600}
 .acd-p{background:var(--green-light);color:var(--green)}
 .acd-a{background:var(--red-light);color:var(--red)}
 .acd-l{background:var(--amber-light);color:var(--amber)}
-@media(max-width:520px){.drawer{width:100%}}
 </style>
 </head>
 <body>
-
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 <nav id="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-mark">
-      <div class="logo-pin" style="background:none;padding:0"><img src="/lardi-mark.png" style="width:36px;height:36px;object-fit:contain;border-radius:6px" alt="Lardi"></div>
-      <div><div class="logo-name">Lardi</div><div class="logo-sub">School Management</div></div>
-    </div>
+  <div class="sidebar-top">
+    <div class="sidebar-logo"><img src="/lardi-mark.png" class="logo-img" alt=""><div><div class="logo-school" id="sb-school">—</div><div class="logo-sub">School Management</div></div></div>
+    <div class="sidebar-term" id="sb-term">—</div>
   </div>
-  <div class="sidebar-school">
-    <div class="school-name" id="sb-school">—</div>
-    <div class="school-term" id="sb-term">—</div>
+  <div class="nav-group"><div class="nav-label">Main</div><a href="/dashboard.html" class="nav-item"><span class="ni">📊</span>Dashboard</a></div>
+  <div class="nav-group"><div class="nav-label">Academic</div>
+    <a href="/students.html"   class="nav-item active"><span class="ni">🎓</span>Students</a>
+    <a href="/attendance.html" class="nav-item"><span class="ni">📋</span>Attendance</a>
+    <a href="/grades.html"     class="nav-item"><span class="ni">📝</span>Grades</a>
+    <a href="/timetable.html"  class="nav-item"><span class="ni">🗓️</span>Timetable</a>
   </div>
-  <div class="nav-section">Main</div>
-  <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-  <div class="nav-section">Academic</div>
-  <a href="students.html"  class="nav-item active"><span class="nav-icon">🎓</span> Students</a>
-  <a href="attendance.html"class="nav-item"><span class="nav-icon">📋</span> Attendance</a>
-  <a href="grades.html"    class="nav-item"><span class="nav-icon">📝</span> Grades &amp; Reports</a>
-  <a href="timetable.html" class="nav-item"><span class="nav-icon">🗓️</span> Timetable</a>
-  <div class="nav-section">Operations</div>
-  <a href="staff.html"   class="nav-item"><span class="nav-icon">👨‍🏫</span> Staff</a>
-  <a href="finance.html" class="nav-item"><span class="nav-icon">💰</span> Finance &amp; Fees</a>
-  <a href="library.html" class="nav-item"><span class="nav-icon">📚</span> Library</a>
-  <a href="comms.html"   class="nav-item"><span class="nav-icon">💬</span> Communication</a>
-  <div class="nav-section" id="admin-nav">Admin</div>
-  <a href="settings.html"    class="nav-item" id="settings-link"><span class="nav-icon">⚙️</span> School Settings</a>
-  <a href="export.html"      class="nav-item" id="export-link"><span class="nav-icon">💾</span> Export Data</a>
-  <a href="demo-reset.html"  class="nav-item" id="demoreset-link"><span class="nav-icon">🔄</span> Reset Demo</a>
+  <div class="nav-group"><div class="nav-label">Operations</div>
+    <a href="/staff.html"   class="nav-item"><span class="ni">👨‍🏫</span>Staff</a>
+    <a href="/finance.html" class="nav-item"><span class="ni">💰</span>Finance</a>
+    <a href="/library.html" class="nav-item"><span class="ni">📚</span>Library</a>
+    <a href="/comms.html"   class="nav-item"><span class="ni">💬</span>Communication</a>
+  </div>
+  <div class="nav-group admin-only"><div class="nav-label">Admin</div>
+    <a href="/settings.html" class="nav-item"><span class="ni">⚙️</span>Settings</a>
+    <a href="/export.html"   class="nav-item"><span class="ni">💾</span>Export</a>
+  </div>
   <div class="sidebar-bottom">
-    <div class="user-card">
-      <div class="user-av" id="sb-av">?</div>
-      <div><div class="user-name" id="sb-name">Loading…</div><div class="user-role" id="sb-role">—</div></div>
-    </div>
-    <div class="sidebar-signout" onclick="signOut()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
-      </svg> Sign out
-    </div>
+    <div class="user-card"><div class="user-av" id="sb-av">?</div><div><div class="user-name" id="sb-name">—</div><div class="user-role" id="sb-role">—</div></div></div>
+    <button class="signout-btn" onclick="signOut()">Sign out</button>
   </div>
 </nav>
 
 <div id="main">
   <div id="topbar">
     <div class="topbar-left">
-      <button class="hamburger" onclick="openSidebar()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--carbon)" stroke-width="2" stroke-linecap="round">
-          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-      </button>
+      <button class="hamburger" onclick="openSidebar()"><svg viewBox="0 0 24 24" fill="none" stroke="var(--carbon)" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       <div class="topbar-title">Students</div>
     </div>
     <div class="topbar-right">
@@ -108,36 +66,17 @@
       <button class="btn btn-green btn-sm" onclick="openAdd()">+ Add Student</button>
     </div>
   </div>
-
   <div id="content">
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
-      <div class="search-bar" style="flex:1;min-width:200px">
-        <span class="search-bar-icon">🔍</span>
-        <input type="text" id="search-input" placeholder="Search name, ID or parent phone…" oninput="applyFilter()">
-      </div>
-      <select class="fi" style="width:150px" id="cls-filter" onchange="applyFilter()">
-        <option value="">All Classes</option>
-      </select>
-      <select class="fi" style="width:130px" id="fee-filter" onchange="applyFilter()">
-        <option value="">Fee Status</option>
-        <option value="paid">Paid</option>
-        <option value="partial">Partial</option>
-        <option value="outstanding">Outstanding</option>
-      </select>
-      <div class="view-toggle">
-        <button class="vt-btn active" onclick="setView('grid',this)">⊞</button>
-        <button class="vt-btn"        onclick="setView('list',this)">☰</button>
-      </div>
+      <div class="search-bar" style="flex:1;min-width:200px"><span class="search-bar-icon">🔍</span><input type="text" id="search-input" placeholder="Search name, ID or parent phone…" oninput="applyFilter()"></div>
+      <select class="fi" style="width:150px" id="cls-filter" onchange="applyFilter()"><option value="">All Classes</option></select>
+      <div class="vt"><button class="vt-btn active" onclick="setView('grid',this)">⊞</button><button class="vt-btn" onclick="setView('list',this)">☰</button></div>
     </div>
-
     <div class="filter-pills" id="pills"></div>
     <div id="box"><div class="loading-center">Loading students…</div></div>
     <div id="pag" style="display:none;align-items:center;justify-content:space-between;margin-top:16px">
       <div style="font-size:.78rem;color:var(--carbon-soft)" id="pag-info"></div>
-      <div style="display:flex;gap:6px">
-        <button class="btn btn-ghost btn-sm" id="prev-btn" onclick="goPage(-1)">← Prev</button>
-        <button class="btn btn-green btn-sm" id="next-btn" onclick="goPage(1)">Next →</button>
-      </div>
+      <div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" id="prev-btn" onclick="goPage(-1)">← Prev</button><button class="btn btn-green btn-sm" id="next-btn" onclick="goPage(1)">Next →</button></div>
     </div>
   </div>
 </div>
@@ -155,10 +94,7 @@
       <div class="field"><label>Date of Birth</label><input type="date" id="f-dob"></div>
       <div class="field"><label>Gender</label><select id="f-gender"><option>Male</option><option>Female</option></select></div>
     </div>
-    <div class="field">
-      <label>Class *</label>
-      <select id="student-class"><option value="">Select class…</option></select>
-    </div>
+    <div class="field"><label>Class *</label><select id="f-cls"><option value="">Select class…</option></select></div>
     <div class="field"><label>Parent / Guardian Name</label><input type="text" id="f-par" placeholder="e.g. Mr. Kofi Asante"></div>
     <div class="form-row-2">
       <div class="field"><label>Parent Phone</label><input type="tel" id="f-phn" placeholder="+233 24 XXX XXXX"></div>
@@ -177,14 +113,20 @@
 <div class="drawer" id="drawer">
   <div class="drawer-hd">
     <div class="av av-lg av-green" id="dr-av">?</div>
-    <div>
-      <div style="font-size:.98rem;font-weight:600;color:var(--carbon)" id="dr-name">—</div>
-      <div style="font-size:.73rem;color:var(--carbon-soft)" id="dr-meta">—</div>
-    </div>
+    <div><div style="font-size:.98rem;font-weight:600;color:var(--carbon)" id="dr-name">—</div><div style="font-size:.73rem;color:var(--carbon-soft)" id="dr-meta">—</div></div>
     <div class="drawer-close" onclick="closeDr()">✕</div>
   </div>
   <div class="drawer-body" id="dr-body"><div class="loading-center">Loading…</div></div>
 </div>
+
+<nav class="mobile-bottom-nav"><div class="mbn-items">
+  <a href="/dashboard.html"  class="mbn-item"><span class="mbn-icon">📊</span>Home</a>
+  <a href="/students.html"   class="mbn-item active"><span class="mbn-icon">🎓</span>Students</a>
+  <a href="/attendance.html" class="mbn-item"><span class="mbn-icon">📋</span>Attend.</a>
+  <a href="/finance.html"    class="mbn-item"><span class="mbn-icon">💰</span>Finance</a>
+  <a href="#" class="mbn-item signout-btn" onclick="signOut();return false;"><span class="mbn-icon">🚪</span>Out</a>
+</div></nav>
+<div id="toast" class="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -194,275 +136,140 @@
 <script src="/auth.js"></script>
 <script src="/db.js"></script>
 <script>
-let PROF = null, ALL = [], FIL = [], PAGE = 1, PER = 24, VIEW = 'grid', PMAP = {};
-let TERM = '', YEAR = '';
+let PROF=null, ALL=[], FIL=[], PAGE=1, PER=24, VIEW='grid', PMAP={}, TERM='', YEAR='';
 
 (async () => {
   try {
     const { profile } = await requireAuth(['admin','teacher']);
     await loadSchoolSettings();
-    PROF = profile;
-    TERM = SCHOOL.term;
-    YEAR = SCHOOL.year;
+    PROF=profile; TERM=SCHOOL.term; YEAR=SCHOOL.year;
+    initSidebar(profile);
 
-    // Sidebar
-    document.getElementById('sb-av').textContent    = getInitials(profile.name);
-    document.getElementById('sb-name').textContent  = profile.name;
-    document.getElementById('sb-role').textContent  = profile.role;
-    document.getElementById('sb-school').textContent= SCHOOL.name;
-    document.getElementById('sb-term').textContent  = `${SCHOOL.term} · ${SCHOOL.year}`;
-
-    if (profile.role !== 'admin') {
-      ['demoreset-link','export-link','settings-link','admin-nav'].forEach(id => {
-        const el = document.getElementById(id); if (el) el.style.display = 'none';
-      });
-    }
-
-    // Class dropdown for Add Student modal — optgroups by level from CLASSES array
-    const sel = document.getElementById('student-class');
+    // Class dropdown for Add modal — built inline from CLASSES array with optgroups
+    const sel = document.getElementById('f-cls');
     sel.innerHTML = '<option value="">Select class…</option>';
     const groups = {};
-    CLASSES.forEach(c => {
-      if (!groups[c.level]) groups[c.level] = [];
-      groups[c.level].push(c);
-    });
+    CLASSES.forEach(c => { if(!groups[c.level])groups[c.level]=[]; groups[c.level].push(c); });
     Object.entries(groups).forEach(([level, classes]) => {
-      const og = document.createElement('optgroup');
-      og.label = level;
-      classes.forEach(c => {
-        const op = document.createElement('option');
-        op.value = c.key;
-        op.textContent = c.label;
-        og.appendChild(op);
-      });
+      const og = document.createElement('optgroup'); og.label = level;
+      classes.forEach(c => { const op=document.createElement('option'); op.value=c.key; op.textContent=c.label; og.appendChild(op); });
       sel.appendChild(og);
     });
 
-    // Class filter + pills — populated from CLASSES array
+    // Class filter dropdown — flat list
     document.getElementById('cls-filter').innerHTML =
       '<option value="">All Classes</option>' +
-      CLASSES.map(c => `<option value="${c.key}">${c.label}</option>`).join('');
+      CLASSES.map(c=>`<option value="${c.key}">${c.label}</option>`).join('');
 
+    // Filter pills
     document.getElementById('pills').innerHTML =
       '<span class="pill active" onclick="pill(\'\',this)">All</span>' +
-      CLASSES.map(c => `<span class="pill" onclick="pill('${c.key}',this)">${c.label}</span>`).join('');
+      CLASSES.map(c=>`<span class="pill" onclick="pill('${c.key}',this)">${c.label}</span>`).join('');
 
     await loadAll();
-
-    if (new URLSearchParams(location.search).get('action') === 'add') openAdd();
-  } catch (err) {
-    console.error('Init error:', err);
-  }
+    if (new URLSearchParams(location.search).get('action')==='add') openAdd();
+  } catch(e) { console.error('Students init:', e); }
 })();
 
 async function loadAll() {
   document.getElementById('box').innerHTML = '<div class="loading-center">Loading students…</div>';
-
-  // Fetch ALL students — no status filter anywhere
   ALL = await getStudents({});
-
-  // Fee payments: single-field Firestore filter, year checked in memory
   PMAP = {};
   try {
     const snap = await db.collection('fee_payments').where('term','==',TERM).get();
-    snap.docs.forEach(d => {
-      const x = d.data();
-      if (x.year === YEAR) PMAP[x.studentId] = (PMAP[x.studentId]||0) + (x.amount||0);
-    });
-  } catch (e) { console.warn('Fee load error:', e.message); }
-
+    snap.docs.forEach(d => { const x=d.data(); if(x.year===YEAR) PMAP[x.studentId]=(PMAP[x.studentId]||0)+(x.amount||0); });
+  } catch(e) { console.warn('Fee load:', e.message); }
   document.getElementById('total-badge').textContent = `${ALL.length} students`;
   applyFilter();
 }
 
 function applyFilter() {
-  const q   = (document.getElementById('search-input').value || '').toLowerCase();
+  const q   = (document.getElementById('search-input').value||'').toLowerCase();
   const cls = document.getElementById('cls-filter').value;
-  const fee = document.getElementById('fee-filter').value;
-
   FIL = ALL.filter(s => {
-    const matchQ = !q ||
-      (s.firstName+' '+s.lastName).toLowerCase().includes(q) ||
-      (s.studentId||'').toLowerCase().includes(q) ||
-      (s.parentPhone||'').includes(q);
-    const matchC = !cls || s.classKey === cls;
-    let   matchF = true;
-    if (fee) {
-      const paid = PMAP[s.studentId] || PMAP[s.id] || 0;
-      const exp  = s.classKey?.startsWith('jhs') ? 2400 : 2000;
-      if      (fee === 'paid')        matchF = paid >= exp;
-      else if (fee === 'partial')     matchF = paid > 0 && paid < exp;
-      else if (fee === 'outstanding') matchF = paid === 0;
-    }
-    return matchQ && matchC && matchF;
+    const mq = !q || (s.firstName+' '+s.lastName).toLowerCase().includes(q) || (s.studentId||'').toLowerCase().includes(q) || (s.parentPhone||'').includes(q);
+    const mc = !cls || s.classKey===cls;
+    return mq && mc;
   });
-
-  PAGE = 1;
-  render();
+  PAGE=1; render();
 }
 
-function pill(cls, el) {
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('cls-filter').value = cls;
-  applyFilter();
-}
-
-function setView(v, el) {
-  VIEW = v;
-  document.querySelectorAll('.vt-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-  render();
-}
+function pill(cls, el) { document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active')); el.classList.add('active'); document.getElementById('cls-filter').value=cls; applyFilter(); }
+function setView(v,el) { VIEW=v; document.querySelectorAll('.vt-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); render(); }
 
 function feeBadge(s) {
-  const paid = PMAP[s.studentId] || PMAP[s.id] || 0;
-  const exp  = s.classKey?.startsWith('jhs') ? 2400 : 2000;
-  if (paid >= exp) return '<span class="badge bg-green">Paid</span>';
-  if (paid > 0)    return '<span class="badge bg-amber">Partial</span>';
-  return '<span class="badge bg-red">Outstanding</span>';
+  const paid=PMAP[s.studentId]||PMAP[s.id]||0, exp=s.classKey?.startsWith('jhs')?2400:2000;
+  return paid>=exp?'<span class="badge bg-green">Paid</span>':paid>0?'<span class="badge bg-amber">Partial</span>':'<span class="badge bg-red">Outstanding</span>';
 }
 
 function render() {
-  const start = (PAGE-1)*PER, end = start+PER, page = FIL.slice(start, end);
+  const start=(PAGE-1)*PER, end=start+PER, page=FIL.slice(start,end);
   const box = document.getElementById('box');
-
   if (!FIL.length) {
-    box.className = '';
-    box.innerHTML = '<div class="empty-state"><div class="empty-icon">🎓</div><div class="empty-title">No students found</div><div class="empty-sub">Try adjusting your search or filters</div></div>';
-    document.getElementById('pag').style.display = 'none';
-    return;
+    box.className=''; box.innerHTML='<div class="empty-state"><div class="empty-icon">🎓</div><div class="empty-title">No students yet</div><div class="empty-sub">Click <strong>Add Student</strong> to enrol your first student.</div></div>';
+    document.getElementById('pag').style.display='none'; return;
   }
-
-  if (VIEW === 'grid') {
-    box.className = 'stud-grid';
-    box.innerHTML = page.map(s => `
-      <div class="student-card" onclick="openDr('${s.id}')">
-        <div class="sc-av">${getInitials(s.firstName+' '+s.lastName)}</div>
-        <div style="flex:1;min-width:0">
-          <div class="sc-name">${s.firstName} ${s.lastName}</div>
-          <div class="sc-meta">${getClassLabel(s.classKey)} · ${s.gender||'—'}</div>
-          <div style="margin-top:6px">${feeBadge(s)}</div>
-          <div class="sc-id">${s.studentId||s.id}</div>
-        </div>
-      </div>`).join('');
+  if (VIEW==='grid') {
+    box.className='stud-grid';
+    box.innerHTML=page.map(s=>`<div class="sc" onclick="openDr('${s.id}')">
+      <div class="sc-av">${getInitials(s.firstName+' '+s.lastName)}</div>
+      <div style="flex:1;min-width:0"><div class="sc-name">${s.firstName} ${s.lastName}</div><div class="sc-meta">${getClassLabel(s.classKey)} · ${s.gender||'—'}</div><div style="margin-top:6px">${feeBadge(s)}</div><div class="sc-id">${s.studentId||s.id}</div></div>
+    </div>`).join('');
   } else {
-    box.className = '';
-    box.innerHTML = `<div class="card"><div class="table-wrap"><table>
-      <thead><tr><th>Student</th><th>Class</th><th>Gender</th><th>Parent</th><th>Fees</th><th></th></tr></thead>
-      <tbody>${page.map(s => `<tr onclick="openDr('${s.id}')" style="cursor:pointer">
-        <td><div style="display:flex;align-items:center;gap:8px">
-          <div class="av av-green">${getInitials(s.firstName+' '+s.lastName)}</div>
-          <div><div style="font-weight:500">${s.firstName} ${s.lastName}</div>
-          <div style="font-size:.68rem;font-family:monospace;color:var(--carbon-soft)">${s.studentId||s.id}</div></div>
-        </div></td>
-        <td>${getClassLabel(s.classKey)}</td>
-        <td>${s.gender||'—'}</td>
-        <td><div style="font-size:.78rem">${s.parentName||'—'}</div>
-            <div style="font-size:.7rem;color:var(--carbon-soft)">${s.parentPhone||''}</div></td>
-        <td>${feeBadge(s)}</td>
+    box.className='';
+    box.innerHTML=`<div class="card"><div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Gender</th><th>Parent</th><th></th></tr></thead><tbody>${
+      page.map(s=>`<tr onclick="openDr('${s.id}')" style="cursor:pointer">
+        <td><div style="display:flex;align-items:center;gap:8px"><div class="av av-green">${getInitials(s.firstName+' '+s.lastName)}</div><div><div style="font-weight:500">${s.firstName} ${s.lastName}</div><div style="font-size:.68rem;font-family:monospace;color:var(--carbon-soft)">${s.studentId||s.id}</div></div></div></td>
+        <td>${getClassLabel(s.classKey)}</td><td>${s.gender||'—'}</td>
+        <td><div style="font-size:.78rem">${s.parentName||'—'}</div><div style="font-size:.7rem;color:var(--carbon-soft)">${s.parentPhone||''}</div></td>
         <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openDr('${s.id}')">View</button></td>
-      </tr>`).join('')}</tbody>
-    </table></div></div>`;
+      </tr>`).join('')
+    }</tbody></table></div></div>`;
   }
-
-  const pag = document.getElementById('pag');
-  pag.style.display = 'flex';
-  document.getElementById('pag-info').textContent = `Showing ${start+1}–${Math.min(end,FIL.length)} of ${FIL.length}`;
-  document.getElementById('prev-btn').disabled = PAGE <= 1;
-  document.getElementById('next-btn').disabled = end >= FIL.length;
+  const pag=document.getElementById('pag'); pag.style.display='flex';
+  document.getElementById('pag-info').textContent=`Showing ${start+1}–${Math.min(end,FIL.length)} of ${FIL.length}`;
+  document.getElementById('prev-btn').disabled=PAGE<=1;
+  document.getElementById('next-btn').disabled=end>=FIL.length;
 }
 
-function goPage(d) { PAGE += d; render(); document.getElementById('content').scrollTop = 0; }
+function goPage(d) { PAGE+=d; render(); document.getElementById('content').scrollTop=0; }
 
 function openAdd()  { document.getElementById('add-modal').classList.add('open'); }
-function closeAdd() {
-  document.getElementById('add-modal').classList.remove('open');
-  document.getElementById('add-err').className = 'form-err';
-}
+function closeAdd() { document.getElementById('add-modal').classList.remove('open'); document.getElementById('add-err').className='form-err'; }
 
 async function doAdd() {
-  const first = document.getElementById('f-first').value.trim();
-  const last  = document.getElementById('f-last').value.trim();
-  const cls   = document.getElementById('student-class').value;
-  const err   = document.getElementById('add-err');
-  err.className = 'form-err';
-
-  if (!first || !last || !cls) {
-    err.textContent = 'First name, last name and class are required.';
-    err.className = 'form-err show';
-    return;
-  }
-
-  const btn = document.getElementById('add-btn');
-  btn.disabled = true; btn.textContent = 'Enrolling…';
-
-  const res = await addStudent({
-    firstName:   first,
-    lastName:    last,
-    dob:         document.getElementById('f-dob').value,
-    gender:      document.getElementById('f-gender').value,
-    classKey:    cls,
-    parentName:  document.getElementById('f-par').value.trim(),
-    parentPhone: document.getElementById('f-phn').value.trim(),
-    parentEmail: document.getElementById('f-pem').value.trim(),
-    address:     document.getElementById('f-adr').value.trim(),
-  });
-
-  btn.disabled = false; btn.textContent = 'Enrol Student';
-
-  if (!res.success) { err.textContent = res.error; err.className = 'form-err show'; return; }
-
-  showToast(`✓ ${first} ${last} enrolled — ${res.studentId}`, 'ok');
-  closeAdd();
-  ['f-first','f-last','f-dob','f-par','f-phn','f-pem','f-adr'].forEach(id => { document.getElementById(id).value = ''; });
+  const first=document.getElementById('f-first').value.trim(), last=document.getElementById('f-last').value.trim(), cls=document.getElementById('f-cls').value;
+  const err=document.getElementById('add-err'); err.className='form-err';
+  if (!first||!last||!cls) { err.textContent='First name, last name and class are required.'; err.className='form-err show'; return; }
+  const btn=document.getElementById('add-btn'); btn.disabled=true; btn.textContent='Enrolling…';
+  const res = await addStudent({ firstName:first,lastName:last,dob:document.getElementById('f-dob').value,gender:document.getElementById('f-gender').value,classKey:cls,parentName:document.getElementById('f-par').value.trim(),parentPhone:document.getElementById('f-phn').value.trim(),parentEmail:document.getElementById('f-pem').value.trim(),address:document.getElementById('f-adr').value.trim() });
+  btn.disabled=false; btn.textContent='Enrol Student';
+  if (!res.success) { err.textContent=res.error; err.className='form-err show'; return; }
+  showToast(`✓ ${first} ${last} enrolled — ${res.studentId}`,'ok');
+  closeAdd(); ['f-first','f-last','f-dob','f-par','f-phn','f-pem','f-adr'].forEach(id=>document.getElementById(id).value='');
   await loadAll();
 }
 
 async function openDr(id) {
-  document.getElementById('drawer').classList.add('open');
-  document.getElementById('dro').classList.add('open');
-  document.getElementById('dr-body').innerHTML = '<div class="loading-center">Loading…</div>';
-
-  const [s, grades, att, pays] = await Promise.all([
-    getStudentById(id),
-    getStudentGrades(id, TERM, YEAR),
-    getStudentAttendance(id),
-    getStudentPayments(id, TERM, YEAR),
-  ]);
-
-  if (!s) { document.getElementById('dr-body').innerHTML = '<div class="empty-state">Student not found</div>'; return; }
-
-  document.getElementById('dr-av').textContent  = getInitials(s.firstName+' '+s.lastName);
-  document.getElementById('dr-name').textContent = `${s.firstName} ${s.lastName}`;
-  document.getElementById('dr-meta').textContent = `${s.studentId||s.id} · ${getClassLabel(s.classKey)}`;
-
-  const attP  = att.filter(a=>a.status==='present').length;
-  const attR  = att.length ? pct(attP, att.length) : 0;
-  const avg   = grades.length ? (grades.reduce((a,g)=>a+g.score,0)/grades.length).toFixed(1) : null;
-  const paid  = pays.reduce((a,p)=>a+(p.amount||0), 0);
-  const exp   = s.classKey?.startsWith('jhs') ? 2400 : 2000;
-  const cal   = att.slice(0,21).map(a =>
-    `<div class="acd ${a.status==='present'?'acd-p':a.status==='absent'?'acd-a':'acd-l'}" title="${a.date}">${a.date.slice(8)}</div>`
-  ).join('');
-
-  document.getElementById('dr-body').innerHTML = `
-    <div class="dr-sec">
-      <div class="dr-lbl">Personal</div>
-      ${ir('Student ID', s.studentId||s.id)}
-      ${ir('Class', getClassLabel(s.classKey))}
-      ${ir('Gender', s.gender||'—')}
-      ${ir('Date of Birth', s.dob||'—')}
-      ${ir('Address', s.address||'—')}
+  document.getElementById('drawer').classList.add('open'); document.getElementById('dro').classList.add('open');
+  document.getElementById('dr-body').innerHTML='<div class="loading-center">Loading…</div>';
+  const [s,grades,att,pays]=await Promise.all([getStudentById(id),getStudentGrades(id,TERM,YEAR),getStudentAttendance(id),getStudentPayments(id,TERM,YEAR)]);
+  if (!s) return;
+  document.getElementById('dr-av').textContent=getInitials(s.firstName+' '+s.lastName);
+  document.getElementById('dr-name').textContent=`${s.firstName} ${s.lastName}`;
+  document.getElementById('dr-meta').textContent=`${s.studentId||id} · ${getClassLabel(s.classKey)}`;
+  const attP=att.filter(a=>a.status==='present').length, attR=att.length?pct(attP,att.length):0;
+  const avg=grades.length?(grades.reduce((a,g)=>a+g.score,0)/grades.length).toFixed(1):null;
+  const paid=pays.reduce((a,p)=>a+(p.amount||0),0), exp=s.classKey?.startsWith('jhs')?2400:2000;
+  const cal=att.slice(0,21).map(a=>`<div class="acd ${a.status==='present'?'acd-p':a.status==='absent'?'acd-a':'acd-l'}" title="${a.date}">${a.date.slice(8)}</div>`).join('');
+  document.getElementById('dr-body').innerHTML=`
+    <div class="dr-sec"><div class="dr-lbl">Personal</div>
+      ${ir('Student ID',s.studentId||id)}${ir('Class',getClassLabel(s.classKey))}${ir('Gender',s.gender||'—')}${ir('Date of Birth',s.dob||'—')}${ir('Address',s.address||'—')}
     </div>
-    <div class="dr-sec">
-      <div class="dr-lbl">Parent / Guardian</div>
-      ${ir('Name', s.parentName||'—')}
-      ${ir('Phone', s.parentPhone||'—')}
-      ${ir('Email', s.parentEmail||'—')}
+    <div class="dr-sec"><div class="dr-lbl">Parent / Guardian</div>
+      ${ir('Name',s.parentName||'—')}${ir('Phone',s.parentPhone||'—')}${ir('Email',s.parentEmail||'—')}
     </div>
-    <div class="dr-sec">
-      <div class="dr-lbl">Attendance — ${TERM}</div>
+    <div class="dr-sec"><div class="dr-lbl">Attendance — ${TERM}</div>
       <div style="display:flex;gap:18px;margin-bottom:10px">
         <div><div style="font-size:1.3rem;font-weight:700;color:var(--green)">${attR}%</div><div style="font-size:.68rem;color:var(--carbon-soft)">Rate</div></div>
         <div><div style="font-size:1.3rem;font-weight:700;color:var(--red)">${att.filter(a=>a.status==='absent').length}</div><div style="font-size:.68rem;color:var(--carbon-soft)">Absent</div></div>
@@ -470,51 +277,20 @@ async function openDr(id) {
       </div>
       <div class="att-cal">${cal||'<span style="color:var(--carbon-soft);font-size:.78rem">No records yet</span>'}</div>
     </div>
-    <div class="dr-sec">
-      <div class="dr-lbl">Grades — ${TERM}</div>
-      ${grades.length
-        ? grades.map(g=>`<div class="ir"><span class="ir-k">${getSubjectLabel(g.subjectKey)}</span>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span style="font-size:.82rem;font-weight:700;color:${getGrade(g.score).color}">${g.score}%</span>
-              <span class="badge bg-green">${g.grade}</span>
-            </div></div>`).join('')
-          + (avg ? `<div class="ir" style="border-top:1px solid var(--border);margin-top:6px;padding-top:8px">
-              <span class="ir-k" style="font-weight:600">Average</span>
-              <span style="font-size:1rem;font-weight:700;color:var(--green)">${avg}%</span></div>` : '')
-        : '<div style="color:var(--carbon-soft);font-size:.82rem">No grades entered yet</div>'}
+    <div class="dr-sec"><div class="dr-lbl">Grades — ${TERM}</div>
+      ${grades.length?grades.map(g=>`<div class="ir"><span class="ir-k">${getSubjectLabel(g.subjectKey)}</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:.82rem;font-weight:700;color:${getGrade(g.score).color}">${g.score}%</span><span class="badge bg-green">${g.grade}</span></div></div>`).join('')+(avg?`<div class="ir" style="border-top:1px solid var(--border);margin-top:6px;padding-top:8px"><span class="ir-k" style="font-weight:600">Average</span><span style="font-size:1rem;font-weight:700;color:var(--green)">${avg}%</span></div>`:''):'<div style="color:var(--carbon-soft);font-size:.82rem">No grades entered yet</div>'}
     </div>
-    <div class="dr-sec">
-      <div class="dr-lbl">Fees — ${TERM}</div>
-      ${ir('Expected', fmtGHS(exp))}
-      ${ir('Paid', `<strong style="color:var(--green)">${fmtGHS(paid)}</strong>`)}
-      ${ir('Balance', `<strong style="color:${paid>=exp?'var(--green)':'var(--red)'}">${fmtGHS(Math.max(0,exp-paid))}</strong>`)}
+    <div class="dr-sec"><div class="dr-lbl">Fees — ${TERM}</div>
+      ${ir('Expected',fmtGHS(exp))}${ir('Paid',`<strong style="color:var(--green)">${fmtGHS(paid)}</strong>`)}${ir('Balance',`<strong style="color:${paid>=exp?'var(--green)':'var(--red)'}">${fmtGHS(Math.max(0,exp-paid))}</strong>`)}
       ${pays.map(p=>`<div class="ir"><span class="ir-k">${formatDate(p.paidAt)}</span><span style="font-size:.78rem;font-weight:500">${fmtGHS(p.amount)} · ${p.method}</span></div>`).join('')}
     </div>
     <div style="display:flex;gap:8px;margin-top:4px">
-      <a href="grades.html?student=${s.id}"  class="btn btn-ghost btn-sm" style="flex:1">📝 Grades</a>
-      <a href="finance.html?student=${s.id}" class="btn btn-ghost btn-sm" style="flex:1">💰 Payment</a>
+      <a href="/grades.html?student=${id}"  class="btn btn-ghost btn-sm" style="flex:1">📝 Grades</a>
+      <a href="/finance.html?student=${id}" class="btn btn-ghost btn-sm" style="flex:1">💰 Payment</a>
     </div>`;
 }
-
-function ir(k, v) {
-  return `<div class="ir"><span class="ir-k">${k}</span><span class="ir-v">${v||'—'}</span></div>`;
-}
-function closeDr()     { document.getElementById('drawer').classList.remove('open'); document.getElementById('dro').classList.remove('open'); }
-function openSidebar() { document.getElementById('sidebar').classList.add('open');   document.getElementById('sidebar-overlay').classList.add('open'); }
-function closeSidebar(){ document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open'); }
+function ir(k,v){return`<div class="ir"><span class="ir-k">${k}</span><span class="ir-v">${v||'—'}</span></div>`;}
+function closeDr(){document.getElementById('drawer').classList.remove('open');document.getElementById('dro').classList.remove('open');}
 </script>
-
-<script>if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script>
-
-<nav class="mobile-bottom-nav">
-  <div class="mbn-items">
-    <a href="dashboard.html"  class="mbn-item"><span class="mbn-icon">📊</span>Home</a>
-    <a href="students.html"   class="mbn-item active"><span class="mbn-icon">🎓</span>Students</a>
-    <a href="attendance.html" class="mbn-item"><span class="mbn-icon">📋</span>Attend.</a>
-    <a href="finance.html"    class="mbn-item"><span class="mbn-icon">💰</span>Finance</a>
-    <a href="#" class="mbn-item signout-btn" onclick="signOut();return false;"><span class="mbn-icon">🚪</span>Sign Out</a>
-  </div>
-</nav>
-
 </body>
 </html>

@@ -1,18 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#1a6b3c">
-<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Lardi">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#1a6b3c"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Timetable — Lardi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared.css">
-<script src="/school.config.js"></script>
-<script>(function(c){document.documentElement.style.setProperty('--green',c.color);var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=c.color;var a=document.querySelector('meta[name="apple-mobile-web-app-title"]');if(a)a.content=c.appName;})(SCHOOL_CONFIG);</script>
 <style>
 .tt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .tt-grid{display:grid;grid-template-columns:70px repeat(5,1fr);gap:3px;min-width:520px}
@@ -24,35 +18,35 @@
 .tt-cell.break-cell{background:var(--gold-light);border:1px solid rgba(200,146,42,.2);cursor:default}
 .tt-subj{font-size:.7rem;font-weight:700;color:var(--green);text-align:center;line-height:1.3}
 .tt-teacher{font-size:.6rem;color:var(--carbon-soft);margin-top:2px;text-align:center}
-.tt-add{font-size:1rem;color:var(--carbon-faint)}
-.break-label{font-size:.7rem;color:var(--gold);font-weight:600;text-align:center}
 </style>
 </head>
 <body>
-
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 <nav id="sidebar">
-  <div class="sidebar-logo"><div class="logo-mark"><img src="/lardi-mark.png" style="width:38px;height:38px;object-fit:contain;display:block;border-radius:6px" alt="Lardi"><div><div class="logo-name">Lardi</div><div class="logo-sub">School Management</div></div></div></div>
-  <div class="sidebar-school"><div class="school-name" id="sb-school">—</div><div class="school-term" id="sb-term">—</div></div>
-  <div class="nav-section">Main</div>
-  <a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-  <div class="nav-section">Academic</div>
-  <a href="students.html"   class="nav-item"><span class="nav-icon">🎓</span> Students</a>
-  <a href="attendance.html" class="nav-item"><span class="nav-icon">📋</span> Attendance</a>
-  <a href="grades.html"     class="nav-item"><span class="nav-icon">📝</span> Grades &amp; Reports</a>
-  <a href="timetable.html"  class="nav-item active"><span class="nav-icon">🗓️</span> Timetable</a>
-  <div class="nav-section">Operations</div>
-  <a href="staff.html"   class="nav-item"><span class="nav-icon">👨‍🏫</span> Staff</a>
-  <a href="finance.html" class="nav-item"><span class="nav-icon">💰</span> Finance &amp; Fees</a>
-  <a href="library.html" class="nav-item"><span class="nav-icon">📚</span> Library</a>
-  <a href="comms.html"   class="nav-item"><span class="nav-icon">💬</span> Communication</a>
-  <div class="nav-section" id="admin-nav">Admin</div>
-  <a href="settings.html"   class="nav-item" id="settings-link"><span class="nav-icon">⚙️</span> School Settings</a>
-  <a href="export.html"     class="nav-item" id="export-link"><span class="nav-icon">💾</span> Export Data</a>
-  <a href="/demo-reset.html" class="nav-item" id="demoreset-link"><span class="nav-icon">🔄</span> Reset Demo</a>
+  <div class="sidebar-top">
+    <div class="sidebar-logo"><img src="/lardi-mark.png" class="logo-img" alt=""><div><div class="logo-school" id="sb-school">—</div><div class="logo-sub">School Management</div></div></div>
+    <div class="sidebar-term" id="sb-term">—</div>
+  </div>
+  <div class="nav-group"><div class="nav-label">Main</div><a href="/dashboard.html" class="nav-item"><span class="ni">📊</span>Dashboard</a></div>
+  <div class="nav-group"><div class="nav-label">Academic</div>
+    <a href="/students.html"   class="nav-item"><span class="ni">🎓</span>Students</a>
+    <a href="/attendance.html" class="nav-item"><span class="ni">📋</span>Attendance</a>
+    <a href="/grades.html"     class="nav-item"><span class="ni">📝</span>Grades</a>
+    <a href="/timetable.html"  class="nav-item active"><span class="ni">🗓️</span>Timetable</a>
+  </div>
+  <div class="nav-group"><div class="nav-label">Operations</div>
+    <a href="/staff.html"   class="nav-item"><span class="ni">👨‍🏫</span>Staff</a>
+    <a href="/finance.html" class="nav-item"><span class="ni">💰</span>Finance</a>
+    <a href="/library.html" class="nav-item"><span class="ni">📚</span>Library</a>
+    <a href="/comms.html"   class="nav-item"><span class="ni">💬</span>Communication</a>
+  </div>
+  <div class="nav-group admin-only"><div class="nav-label">Admin</div>
+    <a href="/settings.html" class="nav-item"><span class="ni">⚙️</span>Settings</a>
+    <a href="/export.html"   class="nav-item"><span class="ni">💾</span>Export</a>
+  </div>
   <div class="sidebar-bottom">
-    <div class="user-card"><div class="user-av" id="sb-av">?</div><div><div class="user-name" id="sb-name">Loading…</div><div class="user-role" id="sb-role">—</div></div></div>
-    <div class="sidebar-signout" onclick="signOut()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign out</div>
+    <div class="user-card"><div class="user-av" id="sb-av">?</div><div><div class="user-name" id="sb-name">—</div><div class="user-role" id="sb-role">—</div></div></div>
+    <button class="signout-btn" onclick="signOut()">Sign out</button>
   </div>
 </nav>
 
@@ -62,72 +56,42 @@
       <button class="hamburger" onclick="openSidebar()"><svg viewBox="0 0 24 24" fill="none" stroke="var(--carbon)" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       <div class="topbar-title">Timetable</div>
     </div>
-    <div class="topbar-right">
-      <span class="topbar-badge" id="tt-badge">Select class</span>
-    </div>
+    <div class="topbar-right"><span class="topbar-badge" id="tt-badge">Select class</span></div>
   </div>
-
   <div id="content">
-
-    <!-- SELECTORS -->
     <div class="card" style="margin-bottom:14px">
       <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
-        <div class="field" style="flex:1;min-width:160px;margin-bottom:0">
-          <label class="fl">Class</label>
-          <select class="fi" id="cls-sel" onchange="loadTT()"><option value="">Select class…</option></select>
-        </div>
-        <div class="field" style="width:120px;margin-bottom:0">
-          <label class="fl">Term</label>
-          <select class="fi" id="term-sel" onchange="loadTT()"></select>
-        </div>
-        <div style="font-size:.76rem;color:var(--carbon-soft);padding-bottom:8px">
-          Tap any cell to assign a subject
-        </div>
+        <div class="field" style="flex:1;min-width:160px;margin-bottom:0"><label class="fl">Class</label><select class="fi" id="cls-sel" onchange="loadTT()"><option value="">Select class…</option></select></div>
+        <div class="field" style="width:120px;margin-bottom:0"><label class="fl">Term</label><select class="fi" id="term-sel" onchange="loadTT()"></select></div>
+        <div style="font-size:.76rem;color:var(--carbon-soft);padding-bottom:8px">Tap any cell to assign a subject</div>
       </div>
     </div>
-
-    <!-- TIMETABLE -->
     <div class="card" style="padding:12px">
       <div class="tt-wrap" id="tt-wrap">
-        <div class="empty-state">
-          <div class="empty-icon">🗓️</div>
-          <div class="empty-title">Select a class above</div>
-          <div class="empty-sub">The weekly timetable will appear here. Tap any cell to add a subject.</div>
-        </div>
+        <div class="empty-state"><div class="empty-icon">🗓️</div><div class="empty-title">Select a class above</div><div class="empty-sub">The weekly timetable will appear here. Tap any cell to add a subject.</div></div>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- EDIT MODAL -->
+<!-- EDIT SLOT MODAL -->
 <div class="modal-overlay" id="slot-modal" onclick="if(event.target===this)closeSlot()">
   <div class="modal" style="max-width:400px">
     <div class="modal-title" id="slot-title">Edit Slot</div>
-    <div class="field">
-      <label>Subject</label>
-      <select class="fi" id="s-sub"><option value="">— No subject (clear slot) —</option></select>
-    </div>
-    <div class="field">
-      <label>Teacher</label>
-      <select class="fi" id="s-teacher"><option value="">No teacher assigned</option></select>
-    </div>
-    <div class="modal-foot">
-      <button class="btn btn-ghost" onclick="closeSlot()">Cancel</button>
-      <button class="btn btn-green" id="slot-save-btn" onclick="saveSlot()">Save</button>
-    </div>
+    <div class="field"><label>Subject</label><select class="fi" id="s-sub"><option value="">— Clear slot —</option></select></div>
+    <div class="field"><label>Teacher</label><select class="fi" id="s-teacher"><option value="">No teacher assigned</option></select></div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeSlot()">Cancel</button><button class="btn btn-green" id="slot-save-btn" onclick="saveSlot()">Save</button></div>
   </div>
 </div>
 
-<nav class="mobile-bottom-nav">
-  <div class="mbn-items">
-    <a href="dashboard.html"  class="mbn-item"><span class="mbn-icon">📊</span>Home</a>
-    <a href="students.html"   class="mbn-item"><span class="mbn-icon">🎓</span>Students</a>
-    <a href="timetable.html"  class="mbn-item active"><span class="mbn-icon">🗓️</span>Timetable</a>
-    <a href="attendance.html" class="mbn-item"><span class="mbn-icon">📋</span>Attend.</a>
-    <a href="#" class="mbn-item signout-btn" onclick="signOut();return false;"><span class="mbn-icon">🚪</span>Sign Out</a>
-  </div>
-</nav>
+<nav class="mobile-bottom-nav"><div class="mbn-items">
+  <a href="/dashboard.html"  class="mbn-item"><span class="mbn-icon">📊</span>Home</a>
+  <a href="/students.html"   class="mbn-item"><span class="mbn-icon">🎓</span>Students</a>
+  <a href="/timetable.html"  class="mbn-item active"><span class="mbn-icon">🗓️</span>Timetable</a>
+  <a href="/attendance.html" class="mbn-item"><span class="mbn-icon">📋</span>Attend.</a>
+  <a href="#" class="mbn-item signout-btn" onclick="signOut();return false;"><span class="mbn-icon">🚪</span>Out</a>
+</div></nav>
+<div id="toast" class="toast"></div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -137,229 +101,103 @@
 <script src="/auth.js"></script>
 <script src="/db.js"></script>
 <script>
-// ── CONSTANTS ────────────────────────────────────────────
-const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
-const PERIODS = [
-  { label:'Period 1', start:'07:30', end:'08:15', isBreak:false },
-  { label:'Period 2', start:'08:15', end:'09:00', isBreak:false },
-  { label:'Break',    start:'09:00', end:'09:30', isBreak:true  },
-  { label:'Period 3', start:'09:30', end:'10:15', isBreak:false },
-  { label:'Period 4', start:'10:15', end:'11:00', isBreak:false },
-  { label:'Lunch',    start:'11:00', end:'11:45', isBreak:true  },
-  { label:'Period 5', start:'11:45', end:'12:30', isBreak:false },
-  { label:'Period 6', start:'12:30', end:'13:15', isBreak:false },
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday'];
+const PERIODS=[
+  {label:'Period 1',start:'07:30',end:'08:15',isBreak:false},
+  {label:'Period 2',start:'08:15',end:'09:00',isBreak:false},
+  {label:'Break',   start:'09:00',end:'09:30',isBreak:true},
+  {label:'Period 3',start:'09:30',end:'10:15',isBreak:false},
+  {label:'Period 4',start:'10:15',end:'11:00',isBreak:false},
+  {label:'Lunch',   start:'11:00',end:'11:45',isBreak:true},
+  {label:'Period 5',start:'11:45',end:'12:30',isBreak:false},
+  {label:'Period 6',start:'12:30',end:'13:15',isBreak:false},
 ];
+let PROF=null, STAFF=[], TT_DATA={}, CUR_SLOT=null, CUR_CLS='', CUR_TERM='';
 
-let PROF = null, STAFF = [], TT_DATA = {}, CUR_SLOT = null;
-let CUR_CLS = '', CUR_TERM = '', CUR_YEAR = '';
-
-// ── INIT ─────────────────────────────────────────────────
-(async () => {
-  const { profile } = await requireAuth(['admin','teacher']);
-  await loadSchoolSettings();
-  PROF = profile;
-
-  document.getElementById('sb-av').textContent     = getInitials(profile.name);
-  document.getElementById('sb-name').textContent   = profile.name;
-  document.getElementById('sb-role').textContent   = profile.role;
-  document.getElementById('sb-school').textContent = SCHOOL.name;
-  document.getElementById('sb-term').textContent   = `${SCHOOL.term} · ${SCHOOL.year}`;
-
-  if (profile.role !== 'admin') {
-    const ids = ['reset-link','export-link','settings-link','admin-nav'];
-    ids.forEach(id => { const el = document.getElementById(id); if(el) el.style.display='none'; });
-  }
-
-  // Build class dropdown
-  const clsSel = document.getElementById('cls-sel');
-  const groups = {};
-  CLASSES.forEach(c => {
-    if (!groups[c.level]) groups[c.level] = [];
-    groups[c.level].push(c);
-  });
-  Object.entries(groups).forEach(([lvl, cs]) => {
-    const og = document.createElement('optgroup');
-    og.label = lvl;
-    cs.forEach(c => {
-      const op = document.createElement('option');
-      op.value = c.key;
-      op.textContent = c.label;
-      og.appendChild(op);
-    });
-    clsSel.appendChild(og);
-  });
-
-  // Term dropdown
-  const termSel = document.getElementById('term-sel');
-  ['Term 1','Term 2','Term 3'].forEach(t => {
-    const op = document.createElement('option');
-    op.value = t; op.textContent = t;
-    if (t === SCHOOL.term) op.selected = true;
-    termSel.appendChild(op);
-  });
-
-  // Subject dropdown for modal
-  const subSel = document.getElementById('s-sub');
-  SUBJECTS.forEach(s => {
-    const op = document.createElement('option');
-    op.value = s.key;
-    op.textContent = `${s.icon} ${s.label}`;
-    subSel.appendChild(op);
-  });
-
-  // Load staff for teacher dropdown
+(async()=>{
   try {
-    STAFF = await getStaff({});
-    const teacherSel = document.getElementById('s-teacher');
-    STAFF.filter(s => ['Teacher','Head Teacher','Assistant Head Teacher'].includes(s.role))
-         .forEach(s => {
-           const op = document.createElement('option');
-           op.value = s.id; op.textContent = s.name;
-           teacherSel.appendChild(op);
-         });
-  } catch(e) { console.warn('Could not load staff:', e); }
+    const {profile}=await requireAuth(['admin','teacher']);
+    await loadSchoolSettings();
+    PROF=profile;
+    initSidebar(profile);
 
-  CUR_YEAR = SCHOOL.year;
+    // Class dropdown — inline, optgroups by level
+    const clsSel=document.getElementById('cls-sel');
+    const groups={};
+    CLASSES.forEach(c=>{ if(!groups[c.level])groups[c.level]=[]; groups[c.level].push(c); });
+    Object.entries(groups).forEach(([level,classes])=>{
+      const og=document.createElement('optgroup'); og.label=level;
+      classes.forEach(c=>{ const op=document.createElement('option'); op.value=c.key; op.textContent=c.label; og.appendChild(op); });
+      clsSel.appendChild(og);
+    });
+
+    const termSel=document.getElementById('term-sel');
+    ['Term 1','Term 2','Term 3'].forEach(t=>{ const op=document.createElement('option'); op.value=t; op.textContent=t; if(t===SCHOOL.term)op.selected=true; termSel.appendChild(op); });
+
+    SUBJECTS.forEach(s=>{ const op=document.createElement('option'); op.value=s.key; op.textContent=`${s.icon} ${s.label}`; document.getElementById('s-sub').appendChild(op); });
+
+    try {
+      STAFF=await getStaff({});
+      STAFF.filter(s=>['Teacher','Head Teacher','Assistant Head Teacher'].includes(s.role)).forEach(s=>{ const op=document.createElement('option'); op.value=s.id; op.textContent=s.name; document.getElementById('s-teacher').appendChild(op); });
+    } catch(e){}
+  } catch(e){console.error('Timetable init:',e);}
 })();
 
-// ── LOAD TIMETABLE ───────────────────────────────────────
-async function loadTT() {
-  CUR_CLS  = document.getElementById('cls-sel').value;
-  CUR_TERM = document.getElementById('term-sel').value;
-  CUR_YEAR = SCHOOL.year;
-
-  if (!CUR_CLS) {
-    document.getElementById('tt-wrap').innerHTML = `
-      <div class="empty-state">
-        <div class="empty-icon">🗓️</div>
-        <div class="empty-title">Select a class above</div>
-        <div class="empty-sub">The weekly timetable will appear here.</div>
-      </div>`;
-    return;
-  }
-
-  document.getElementById('tt-badge').textContent = `${getClassLabel(CUR_CLS)} · ${CUR_TERM}`;
-  document.getElementById('tt-wrap').innerHTML = '<div class="loading-center">Loading…</div>';
-
+async function loadTT(){
+  CUR_CLS=document.getElementById('cls-sel').value;
+  CUR_TERM=document.getElementById('term-sel').value;
+  if(!CUR_CLS){document.getElementById('tt-wrap').innerHTML='<div class="empty-state"><div class="empty-icon">🗓️</div><div class="empty-title">Select a class above</div></div>';return;}
+  document.getElementById('tt-badge').textContent=`${getClassLabel(CUR_CLS)} · ${CUR_TERM}`;
+  document.getElementById('tt-wrap').innerHTML='<div class="loading-center">Loading…</div>';
   try {
-    // Load ALL timetable docs for this class — no term/year filter
-    // This way it works even if seed data has different term values
-    const snap = await db.collection('timetable')
-      .where('classKey', '==', CUR_CLS)
-      .get();
-
-    TT_DATA = {};
-    snap.docs.forEach(d => {
-      const data = d.data();
-      // Accept docs that match term OR have no term (legacy seed data)
-      if (!data.term || data.term === CUR_TERM) {
-        const key = `${data.day}_${data.startTime || data.period}`;
-        TT_DATA[key] = { ...data, id: d.id };
-      }
-    });
-
+    const snap=await db.collection('timetable').where('classKey','==',CUR_CLS).get();
+    TT_DATA={};
+    snap.docs.forEach(d=>{ const x=d.data(); if(!x.term||x.term===CUR_TERM){ TT_DATA[`${x.day}_${x.startTime||x.period}`]={...x,id:d.id}; }});
     renderTT();
-  } catch(e) {
-    document.getElementById('tt-wrap').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Error loading timetable</div><div class="empty-sub">${e.message}</div></div>`;
-  }
+  } catch(e){ document.getElementById('tt-wrap').innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-title">Error loading timetable</div><div class="empty-sub">${e.message}</div></div>`; }
 }
 
-// ── RENDER ───────────────────────────────────────────────
-function renderTT() {
-  let html = `<div class="tt-grid" style="margin-bottom:3px">
-    <div style="font-size:.65rem;color:var(--carbon-soft);text-align:right;padding:4px">Time</div>
-    ${DAYS.map(d => `<div class="tt-hd">${d.slice(0,3)}</div>`).join('')}
-  </div>`;
-
-  PERIODS.forEach(p => {
-    html += `<div class="tt-grid" style="margin-bottom:3px">
-      <div class="tt-time"><div><div>${p.start}</div><div style="font-size:.58rem">${p.label}</div></div></div>`;
-
-    if (p.isBreak) {
-      DAYS.forEach(() => { html += `<div class="tt-cell break-cell"><div class="break-label">${p.label}</div></div>`; });
-    } else {
-      DAYS.forEach(day => {
-        const key  = `${day}_${p.start}`;
-        const slot = TT_DATA[key];
-        const subj = slot ? SUBJECTS.find(s => s.key === slot.subjectKey) : null;
-        html += `<div class="tt-cell ${slot ? 'filled' : ''}" onclick="openSlot('${day}','${p.start}','${p.end}','${p.label}')">`;
-        if (slot && subj) {
-          html += `<div><div class="tt-subj">${subj.icon} ${subj.label}</div><div class="tt-teacher">${slot.staffName||''}</div></div>`;
-        } else {
-          html += `<div class="tt-add">+</div>`;
-        }
-        html += `</div>`;
-      });
-    }
-    html += `</div>`;
+function renderTT(){
+  let html=`<div class="tt-grid" style="margin-bottom:3px"><div style="font-size:.65rem;color:var(--carbon-soft);text-align:right;padding:4px">Time</div>${DAYS.map(d=>`<div class="tt-hd">${d.slice(0,3)}</div>`).join('')}</div>`;
+  PERIODS.forEach(p=>{
+    html+=`<div class="tt-grid" style="margin-bottom:3px"><div class="tt-time"><div><div>${p.start}</div><div style="font-size:.58rem">${p.label}</div></div></div>`;
+    if(p.isBreak){DAYS.forEach(()=>{html+=`<div class="tt-cell break-cell"><div style="font-size:.7rem;color:var(--gold);font-weight:600;text-align:center">${p.label}</div></div>`;});}
+    else{DAYS.forEach(day=>{const slot=TT_DATA[`${day}_${p.start}`],subj=slot?SUBJECTS.find(s=>s.key===slot.subjectKey):null;html+=`<div class="tt-cell ${slot?'filled':''}" onclick="openSlot('${day}','${p.start}','${p.end}','${p.label}')">${slot&&subj?`<div><div class="tt-subj">${subj.icon} ${subj.label}</div><div class="tt-teacher">${slot.staffName||''}</div></div>`:'<div style="font-size:1rem;color:var(--carbon-faint)">+</div>'}</div>`;});}
+    html+=`</div>`;
   });
-
-  document.getElementById('tt-wrap').innerHTML = html;
+  document.getElementById('tt-wrap').innerHTML=html;
 }
 
-// ── SLOT MODAL ───────────────────────────────────────────
-function openSlot(day, start, end, label) {
-  CUR_SLOT = { day, start, end };
-  document.getElementById('slot-title').textContent = `${day} · ${start} – ${end} (${label})`;
-  const existing = TT_DATA[`${day}_${start}`];
-  document.getElementById('s-sub').value     = existing?.subjectKey || '';
-  document.getElementById('s-teacher').value = existing?.staffId    || '';
+function openSlot(day,start,end,label){
+  CUR_SLOT={day,start,end};
+  document.getElementById('slot-title').textContent=`${day} · ${start} – ${end} (${label})`;
+  const ex=TT_DATA[`${day}_${start}`];
+  document.getElementById('s-sub').value=ex?.subjectKey||'';
+  document.getElementById('s-teacher').value=ex?.staffId||'';
   document.getElementById('slot-modal').classList.add('open');
 }
-function closeSlot() {
-  document.getElementById('slot-modal').classList.remove('open');
-  CUR_SLOT = null;
-}
+function closeSlot(){document.getElementById('slot-modal').classList.remove('open');CUR_SLOT=null;}
 
-async function saveSlot() {
-  if (!CUR_SLOT || !CUR_CLS) return;
-  const subjectKey = document.getElementById('s-sub').value;
-  const staffId    = document.getElementById('s-teacher').value;
-  const staffName  = staffId ? (STAFF.find(s => s.id === staffId)?.name || '') : '';
-
-  const btn = document.getElementById('slot-save-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
-
-  const docId = `${CUR_CLS}_${CUR_SLOT.day}_${CUR_SLOT.start}_${CUR_TERM}_${CUR_YEAR}`;
-
+async function saveSlot(){
+  if(!CUR_SLOT||!CUR_CLS)return;
+  const subjectKey=document.getElementById('s-sub').value,staffId=document.getElementById('s-teacher').value;
+  const staffName=staffId?(STAFF.find(s=>s.id===staffId)?.name||''):'';
+  const btn=document.getElementById('slot-save-btn');btn.disabled=true;btn.textContent='Saving…';
+  const docId=`${CUR_CLS}_${CUR_SLOT.day}_${CUR_SLOT.start}_${CUR_TERM}_${SCHOOL.year}`;
   try {
-    if (subjectKey) {
-      await db.collection('timetable').doc(docId).set({
-        classKey:   CUR_CLS,
-        day:        CUR_SLOT.day,
-        startTime:  CUR_SLOT.start,
-        endTime:    CUR_SLOT.end,
-        subjectKey, staffId, staffName,
-        term:       CUR_TERM,
-        year:       CUR_YEAR,
-      });
-      TT_DATA[`${CUR_SLOT.day}_${CUR_SLOT.start}`] = {
-        subjectKey, staffId, staffName,
-        day: CUR_SLOT.day, startTime: CUR_SLOT.start,
-      };
+    if(subjectKey){
+      await db.collection('timetable').doc(docId).set({classKey:CUR_CLS,day:CUR_SLOT.day,startTime:CUR_SLOT.start,endTime:CUR_SLOT.end,subjectKey,staffId,staffName,term:CUR_TERM,year:SCHOOL.year});
+      TT_DATA[`${CUR_SLOT.day}_${CUR_SLOT.start}`]={subjectKey,staffId,staffName,day:CUR_SLOT.day,startTime:CUR_SLOT.start};
     } else {
-      // Empty subject = delete the slot
       await db.collection('timetable').doc(docId).delete();
-      // Also try deleting any legacy format doc
-      const key = `${CUR_SLOT.day}_${CUR_SLOT.start}`;
-      if (TT_DATA[key]?.id) {
-        try { await db.collection('timetable').doc(TT_DATA[key].id).delete(); } catch(e){}
-      }
+      const key=`${CUR_SLOT.day}_${CUR_SLOT.start}`;
+      if(TT_DATA[key]?.id){try{await db.collection('timetable').doc(TT_DATA[key].id).delete();}catch(e){}}
       delete TT_DATA[`${CUR_SLOT.day}_${CUR_SLOT.start}`];
     }
-    closeSlot();
-    renderTT();
-    showToast(subjectKey ? '✓ Slot saved' : '✓ Slot cleared', 'ok');
-  } catch(e) {
-    showToast('Error: ' + e.message, 'err');
-  }
-
-  btn.disabled = false; btn.textContent = 'Save';
+    closeSlot();renderTT();showToast(subjectKey?'✓ Slot saved':'✓ Slot cleared','ok');
+  } catch(e){showToast('Error: '+e.message,'err');}
+  btn.disabled=false;btn.textContent='Save';
 }
-
-function openSidebar()  { document.getElementById('sidebar').classList.add('open');    document.getElementById('sidebar-overlay').classList.add('open'); }
-function closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); }
 </script>
-<script>if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script>
 </body>
 </html>

@@ -1,69 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Lardi">
-<meta name="mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#1a6b3c">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#1a6b3c"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>Staff — Lardi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/shared.css">
-<script src="/school.config.js"></script>
-<script>(function(c){document.documentElement.style.setProperty('--green',c.color);var t=document.querySelector('meta[name="theme-color"]');if(t)t.content=c.color;var a=document.querySelector('meta[name="apple-mobile-web-app-title"]');if(a)a.content=c.appName;})(SCHOOL_CONFIG);</script>
 <style>
 .staff-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
-.staff-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;cursor:pointer;transition:all .13s}
-.staff-card:hover{border-color:var(--green-mid);box-shadow:0 3px 16px rgba(26,107,60,.08)}
+.staff-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;cursor:pointer;transition:all .13s;text-align:center}
+.staff-card:hover{border-color:var(--green-mid);box-shadow:var(--shadow-sm)}
 .staff-av{width:52px;height:52px;border-radius:50%;background:var(--green-light);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-size:1.2rem;font-weight:700;color:var(--green);margin:0 auto 12px}
-.staff-name{font-size:.92rem;font-weight:600;color:var(--carbon);text-align:center}
-.staff-role{font-size:.74rem;color:var(--carbon-soft);text-align:center;margin-top:2px}
-.staff-dept{font-size:.7rem;color:var(--green);font-weight:500;text-align:center;margin-top:6px}
-.staff-tags{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:10px}
-.drawer-overlay{position:fixed;inset:0;background:rgba(28,28,28,.4);z-index:300;display:none}
-.drawer-overlay.open{display:block}
-.drawer{position:fixed;right:0;top:0;bottom:0;width:420px;background:var(--white);z-index:301;overflow-y:auto;box-shadow:-8px 0 40px rgba(28,28,28,.12);transform:translateX(100%);transition:transform .25s ease}
-.drawer.open{transform:translateX(0)}
-.drawer-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;position:sticky;top:0;background:var(--white);z-index:1}
-.drawer-close{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-left:auto;transition:all .13s;font-size:.8rem}
-.drawer-close:hover{background:var(--red-light);border-color:var(--red);color:var(--red)}
-.drawer-body{padding:18px 22px}
-.dr-sec{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)}
-.dr-sec:last-child{border-bottom:none}
-.dr-lbl{font-size:.62rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--carbon-soft);margin-bottom:10px}
-.ir{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:.83rem}
-.ir-k{color:var(--carbon-soft)}.ir-v{font-weight:500;color:var(--carbon);text-align:right}
 .sub-check{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--carbon-mid);padding:4px 0}
 .sub-check input{width:15px;height:15px;accent-color:var(--green)}
-@media(max-width:520px){.drawer{width:100%}}
 </style>
 </head>
 <body>
 <div id="sidebar-overlay" onclick="closeSidebar()"></div>
 <nav id="sidebar">
-  <div class="sidebar-logo"><div class="logo-mark"><div class="logo-pin" style="background:none;padding:0"><img src="/lardi-mark.png?v=3" style="width:36px;height:36px;object-fit:contain;border-radius:6px" alt="Lardi"></div><div><div class="logo-name">Lardi</div><div class="logo-sub">School Management</div></div></div></div>
-  <div class="sidebar-school"><div class="school-name" id="sb-school">Lardi Demo School</div><div class="school-term" id="sb-term">—</div></div>
-  <div class="nav-section">Main</div><a href="dashboard.html" class="nav-item"><span class="nav-icon">📊</span> Dashboard</a>
-  <div class="nav-section">Academic</div>
-  <a href="students.html" class="nav-item"><span class="nav-icon">🎓</span> Students</a>
-  <a href="attendance.html" class="nav-item"><span class="nav-icon">📋</span> Attendance</a>
-  <a href="grades.html" class="nav-item"><span class="nav-icon">📝</span> Grades &amp; Reports</a>
-  <a href="timetable.html" class="nav-item"><span class="nav-icon">🗓️</span> Timetable</a>
-  <div class="nav-section">Operations</div>
-  <a href="staff.html" class="nav-item active"><span class="nav-icon">👨‍🏫</span> Staff</a>
-  <a href="finance.html" class="nav-item"><span class="nav-icon">💰</span> Finance &amp; Fees</a>
-  <a href="library.html" class="nav-item"><span class="nav-icon">📚</span> Library</a>
-  <a href="comms.html" class="nav-item"><span class="nav-icon">💬</span> Communication</a>
-  <div class="nav-section" id="admin-nav">Admin</div><a href="export.html" class="nav-item" id="export-link"><span class="nav-icon">💾</span> Export Data</a>
-  <a href="/demo-reset.html" class="nav-item" id="demoreset-link"><span class="nav-icon">🔄</span> Reset Demo</a>
+  <div class="sidebar-top">
+    <div class="sidebar-logo"><img src="/lardi-mark.png" class="logo-img" alt=""><div><div class="logo-school" id="sb-school">—</div><div class="logo-sub">School Management</div></div></div>
+    <div class="sidebar-term" id="sb-term">—</div>
+  </div>
+  <div class="nav-group"><div class="nav-label">Main</div><a href="/dashboard.html" class="nav-item"><span class="ni">📊</span>Dashboard</a></div>
+  <div class="nav-group"><div class="nav-label">Academic</div>
+    <a href="/students.html"   class="nav-item"><span class="ni">🎓</span>Students</a>
+    <a href="/attendance.html" class="nav-item"><span class="ni">📋</span>Attendance</a>
+    <a href="/grades.html"     class="nav-item"><span class="ni">📝</span>Grades</a>
+    <a href="/timetable.html"  class="nav-item"><span class="ni">🗓️</span>Timetable</a>
+  </div>
+  <div class="nav-group"><div class="nav-label">Operations</div>
+    <a href="/staff.html"   class="nav-item active"><span class="ni">👨‍🏫</span>Staff</a>
+    <a href="/finance.html" class="nav-item"><span class="ni">💰</span>Finance</a>
+    <a href="/library.html" class="nav-item"><span class="ni">📚</span>Library</a>
+    <a href="/comms.html"   class="nav-item"><span class="ni">💬</span>Communication</a>
+  </div>
+  <div class="nav-group admin-only"><div class="nav-label">Admin</div>
+    <a href="/settings.html" class="nav-item"><span class="ni">⚙️</span>Settings</a>
+    <a href="/export.html"   class="nav-item"><span class="ni">💾</span>Export</a>
+  </div>
   <div class="sidebar-bottom">
-    <div class="user-card"><div class="user-av" id="sb-av">?</div><div><div class="user-name" id="sb-name">Loading…</div><div class="user-role" id="sb-role">—</div></div></div>
-    <div class="sidebar-signout" onclick="signOut()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> Sign out</div>
+    <div class="user-card"><div class="user-av" id="sb-av">?</div><div><div class="user-name" id="sb-name">—</div><div class="user-role" id="sb-role">—</div></div></div>
+    <button class="signout-btn" onclick="signOut()">Sign out</button>
   </div>
 </nav>
+
 <div id="main">
   <div id="topbar">
     <div class="topbar-left">
@@ -72,21 +54,19 @@
     </div>
     <div class="topbar-right">
       <span class="topbar-badge" id="total-badge">—</span>
-      <button class="btn btn-green btn-sm" id="add-btn-top" onclick="openAdd()" style="display:none">+ Add Staff</button>
+      <button class="btn btn-green btn-sm admin-only" id="add-staff-btn" onclick="openAdd()">+ Add Staff</button>
     </div>
   </div>
   <div id="content">
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px">
-      <div class="search-bar" style="flex:1;min-width:200px"><span class="search-bar-icon">🔍</span><input type="text" id="search-input" placeholder="Search name, role or department…" oninput="filter()"></div>
-      <select class="fi" style="width:180px" id="dept-filter" onchange="filter()"><option value="">All Departments</option></select>
-      <select class="fi" style="width:150px" id="role-filter" onchange="filter()"><option value="">All Roles</option></select>
+      <div class="search-bar" style="flex:1;min-width:200px"><span class="search-bar-icon">🔍</span><input type="text" id="search-input" placeholder="Search name, role or department…" oninput="applyFilter()"></div>
+      <select class="fi" style="width:170px" id="dept-filter" onchange="applyFilter()"><option value="">All Departments</option></select>
     </div>
-    <div class="filter-pills" id="dept-pills"></div>
     <div id="staff-grid"><div class="loading-center">Loading staff…</div></div>
   </div>
 </div>
 
-<!-- ADD STAFF MODAL -->
+<!-- ADD MODAL -->
 <div class="modal-overlay" id="add-modal" onclick="if(event.target===this)closeAdd()">
   <div class="modal">
     <div class="modal-title">👨‍🏫 Add New Staff Member</div>
@@ -101,10 +81,7 @@
       <div class="field"><label>Email</label><input type="email" id="f-email" placeholder="staff@school.edu.gh"></div>
     </div>
     <div class="field"><label>Monthly Salary (GHS)</label><input type="number" id="f-salary" placeholder="e.g. 4500"></div>
-    <div class="field">
-      <label>Subjects Taught</label>
-      <div id="sub-checks" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--cream);border-radius:var(--r-md);padding:12px;border:1.5px solid var(--border-med)"></div>
-    </div>
+    <div class="field"><label>Subjects Taught</label><div id="sub-checks" style="display:grid;grid-template-columns:1fr 1fr;gap:4px;background:var(--cream);border-radius:var(--r-md);padding:12px;border:1.5px solid var(--border-med)"></div></div>
     <div class="modal-foot"><button class="btn btn-ghost" onclick="closeAdd()">Cancel</button><button class="btn btn-green" id="save-staff-btn" onclick="doAdd()">Add Staff</button></div>
   </div>
 </div>
@@ -120,84 +97,81 @@
   <div class="drawer-body" id="dr-body"><div class="loading-center">Loading…</div></div>
 </div>
 
+<nav class="mobile-bottom-nav"><div class="mbn-items">
+  <a href="/dashboard.html" class="mbn-item"><span class="mbn-icon">📊</span>Home</a>
+  <a href="/students.html"  class="mbn-item"><span class="mbn-icon">🎓</span>Students</a>
+  <a href="/staff.html"     class="mbn-item active"><span class="mbn-icon">👨‍🏫</span>Staff</a>
+  <a href="/finance.html"   class="mbn-item"><span class="mbn-icon">💰</span>Finance</a>
+  <a href="#" class="mbn-item signout-btn" onclick="signOut();return false;"><span class="mbn-icon">🚪</span>Out</a>
+</div></nav>
+<div id="toast" class="toast"></div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="/firebase-config.js"></script><script src="/shared.js"></script><script src="/auth.js"></script><script src="/db.js"></script>
+<script src="/firebase-config.js"></script>
+<script src="/shared.js"></script>
+<script src="/auth.js"></script>
+<script src="/db.js"></script>
 <script>
-let PROF=null,ALL=[],FIL=[];
+let PROF=null, ALL=[], FIL=[];
 
-(async()=>{
-  const {profile}=await requireAuth(['admin','teacher']);
-  await loadSchoolSettings();
-  PROF=profile;
-  document.getElementById('sb-av').textContent=getInitials(profile.name);
-  document.getElementById('sb-name').textContent=profile.name;
-  document.getElementById('sb-role').textContent=profile.role;
-  document.getElementById('sb-school').textContent=SCHOOL.name;
-  document.getElementById('sb-term').textContent=`${SCHOOL.term} · ${SCHOOL.year}`;
-  if(profile.role==='admin'){
-    document.getElementById('add-btn-top').style.display='inline-flex';
-  } else {
-    const _rl=document.getElementById('demoreset-link');if(_rl)_rl.style.display='none';const _el=document.getElementById('export-link');if(_el)_el.style.display='none';const _sl=document.getElementById('settings-link');if(_sl)_sl.style.display='none';const _an=document.getElementById('admin-nav');if(_an)_an.style.display='none';
-  }
-  // Build filters
-  document.getElementById('dept-filter').innerHTML='<option value="">All Departments</option>'+DEPARTMENTS.map(d=>`<option value="${d}">${d}</option>`).join('');
-  document.getElementById('role-filter').innerHTML='<option value="">All Roles</option>'+STAFF_ROLES.map(r=>`<option value="${r}">${r}</option>`).join('');
-  document.getElementById('f-role').innerHTML=STAFF_ROLES.map(r=>`<option value="${r}">${r}</option>`).join('');
-  document.getElementById('f-dept').innerHTML=DEPARTMENTS.map(d=>`<option value="${d}">${d}</option>`).join('');
-  document.getElementById('sub-checks').innerHTML=SUBJECTS.map(s=>`<label class="sub-check"><input type="checkbox" value="${s.key}"> ${s.icon} ${s.label}</label>`).join('');
-  document.getElementById('dept-pills').innerHTML='<span class="pill active" onclick="deptPill(\'\',this)">All</span>'+DEPARTMENTS.map(d=>`<span class="pill" onclick="deptPill('${d}',this)">${d}</span>`).join('');
-  await loadAll();
+(async () => {
+  try {
+    const { profile } = await requireAuth(['admin','teacher']);
+    await loadSchoolSettings();
+    PROF=profile;
+    initSidebar(profile);
+
+    document.getElementById('dept-filter').innerHTML='<option value="">All Departments</option>'+DEPARTMENTS.map(d=>`<option value="${d}">${d}</option>`).join('');
+    document.getElementById('f-role').innerHTML=STAFF_ROLES.map(r=>`<option value="${r}">${r}</option>`).join('');
+    document.getElementById('f-dept').innerHTML=DEPARTMENTS.map(d=>`<option value="${d}">${d}</option>`).join('');
+    document.getElementById('sub-checks').innerHTML=SUBJECTS.map(s=>`<label class="sub-check"><input type="checkbox" value="${s.key}"> ${s.icon} ${s.label}</label>`).join('');
+
+    await loadAll();
+  } catch(e) { console.error('Staff init:', e); }
 })();
 
 async function loadAll(){
   document.getElementById('staff-grid').innerHTML='<div class="loading-center">Loading staff…</div>';
   ALL=await getStaff({});
   document.getElementById('total-badge').textContent=`${ALL.length} staff`;
-  filter();
+  applyFilter();
 }
 
-function filter(){
+function applyFilter(){
   const q=(document.getElementById('search-input').value||'').toLowerCase();
   const dept=document.getElementById('dept-filter').value;
-  const role=document.getElementById('role-filter').value;
-  FIL=ALL.filter(s=>{
-    const mq=!q||(s.name||'').toLowerCase().includes(q)||(s.role||'').toLowerCase().includes(q)||(s.department||'').toLowerCase().includes(q);
-    const md=!dept||s.department===dept;
-    const mr=!role||s.role===role;
-    return mq&&md&&mr;
-  });
+  FIL=ALL.filter(s=>(!q||(s.name||'').toLowerCase().includes(q)||(s.role||'').toLowerCase().includes(q)||(s.department||'').toLowerCase().includes(q))&&(!dept||s.department===dept));
   rend();
 }
 
-function deptPill(dept,el){document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('dept-filter').value=dept;filter();}
-
 function rend(){
-  if(!FIL.length){document.getElementById('staff-grid').innerHTML='<div class="empty-state"><div class="empty-icon">👨‍🏫</div><div class="empty-title">No staff found</div><div class="empty-sub">Try adjusting your search or filters</div></div>';return;}
+  if(!FIL.length){document.getElementById('staff-grid').innerHTML='<div class="empty-state"><div class="empty-icon">👨‍🏫</div><div class="empty-title">No staff yet</div><div class="empty-sub">Click <strong>Add Staff</strong> to add your first team member.</div></div>';return;}
   document.getElementById('staff-grid').innerHTML=`<div class="staff-grid">${FIL.map(s=>`
     <div class="staff-card" onclick="openDr('${s.id}')">
       <div class="staff-av">${getInitials(s.name)}</div>
-      <div class="staff-name">${s.name}</div>
-      <div class="staff-role">${s.role}</div>
-      <div class="staff-dept">${s.department||'—'}</div>
-      ${s.subjects?.length?`<div class="staff-tags">${s.subjects.slice(0,3).map(k=>`<span class="badge bg-green">${getSubjectLabel(k).split(' ')[0]}</span>`).join('')}${s.subjects.length>3?`<span class="badge bg-gray">+${s.subjects.length-3}</span>`:''}</div>`:''}
+      <div style="font-size:.92rem;font-weight:600;color:var(--carbon)">${s.name}</div>
+      <div style="font-size:.74rem;color:var(--carbon-soft);margin-top:2px">${s.role}</div>
+      <div style="font-size:.7rem;color:var(--green);font-weight:500;margin-top:6px">${s.department||'—'}</div>
+      ${s.subjects?.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:10px">${s.subjects.slice(0,3).map(k=>`<span class="badge bg-green">${getSubjectLabel(k).split(' ')[0]}</span>`).join('')}${s.subjects.length>3?`<span class="badge bg-gray">+${s.subjects.length-3}</span>`:''}</div>`:''}
     </div>`).join('')}</div>`;
 }
 
 function openAdd(){document.getElementById('add-modal').classList.add('open');}
 function closeAdd(){document.getElementById('add-modal').classList.remove('open');document.getElementById('add-err').className='form-err';}
+
 async function doAdd(){
   const name=document.getElementById('f-name').value.trim();
-  const err=document.getElementById('add-err');err.className='form-err';
+  const err=document.getElementById('add-err'); err.className='form-err';
   if(!name){err.textContent='Name is required.';err.className='form-err show';return;}
   const subs=[...document.querySelectorAll('#sub-checks input:checked')].map(c=>c.value);
   const btn=document.getElementById('save-staff-btn');btn.disabled=true;btn.textContent='Adding…';
   const res=await addStaff({name,role:document.getElementById('f-role').value,department:document.getElementById('f-dept').value,subjects:subs,phone:document.getElementById('f-phn').value.trim(),email:document.getElementById('f-email').value.trim(),salary:document.getElementById('f-salary').value});
   btn.disabled=false;btn.textContent='Add Staff';
   if(!res.success){err.textContent=res.error;err.className='form-err show';return;}
-  showToast(`✓ ${name} added — ${res.staffId}`,'ok');
-  closeAdd();document.getElementById('f-name').value='';document.getElementById('f-phn').value='';document.getElementById('f-email').value='';document.getElementById('f-salary').value='';
+  showToast(`✓ ${name} added`,'ok');
+  closeAdd();['f-name','f-phn','f-email','f-salary'].forEach(i=>document.getElementById(i).value='');
   document.querySelectorAll('#sub-checks input').forEach(c=>c.checked=false);
   await loadAll();
 }
@@ -205,39 +179,18 @@ async function doAdd(){
 async function openDr(id){
   document.getElementById('drawer').classList.add('open');document.getElementById('dro').classList.add('open');
   document.getElementById('dr-body').innerHTML='<div class="loading-center">Loading…</div>';
-  const s=await getStaffById(id);
-  if(!s)return;
+  const s=await getStaffById(id);if(!s)return;
   document.getElementById('dr-av').textContent=getInitials(s.name);
   document.getElementById('dr-name').textContent=s.name;
-  document.getElementById('dr-meta').textContent=`${s.staffId} · ${s.role}`;
+  document.getElementById('dr-meta').textContent=`${s.staffId||id} · ${s.role}`;
   document.getElementById('dr-body').innerHTML=`
     <div class="dr-sec"><div class="dr-lbl">Details</div>
-      ${ri('Staff ID',s.staffId)}${ri('Role',s.role)}${ri('Department',s.department||'—')}${ri('Phone',s.phone||'—')}${ri('Email',s.email||'—')}${ri('Monthly Salary',s.salary?fmtGHS(s.salary):'—')}${ri('Status','<span class="badge bg-green">Active</span>')}
+      ${ir('Staff ID',s.staffId||id)}${ir('Role',s.role)}${ir('Department',s.department||'—')}${ir('Phone',s.phone||'—')}${ir('Email',s.email||'—')}${ir('Salary',s.salary?fmtGHS(s.salary):'—')}
     </div>
-    ${s.subjects?.length?`<div class="dr-sec"><div class="dr-lbl">Subjects Taught</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">${s.subjects.map(k=>`<span class="badge bg-green">${SUBJECTS.find(x=>x.key===k)?.icon||''} ${getSubjectLabel(k)}</span>`).join('')}</div></div>`:''}
-    <div class="dr-sec"><div class="dr-lbl">Joined</div>${ri('Date',s.joinedAt?formatDateFull(s.joinedAt):'—')}</div>
-    ${PROF?.role==='admin'?`<div style="display:flex;gap:8px;margin-top:4px">
-      <button class="btn btn-ghost btn-sm" onclick="if(confirm('Deactivate ${s.name}?'))updateStaff('${s.id}',{status:'inactive'}).then(()=>{showToast('Staff deactivated','ok');closeDr();loadAll();})">Deactivate</button>
-    </div>`:''}`;
+    ${s.subjects?.length?`<div class="dr-sec"><div class="dr-lbl">Subjects</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px">${s.subjects.map(k=>`<span class="badge bg-green">${SUBJECTS.find(x=>x.key===k)?.icon||''} ${getSubjectLabel(k)}</span>`).join('')}</div></div>`:''}`;
 }
-function ri(k,v){return`<div class="ir"><span class="ir-k">${k}</span><span class="ir-v">${v||'—'}</span></div>`;}
+function ir(k,v){return`<div class="ir"><span class="ir-k">${k}</span><span class="ir-v">${v||'—'}</span></div>`;}
 function closeDr(){document.getElementById('drawer').classList.remove('open');document.getElementById('dro').classList.remove('open');}
-function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');}
-function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');}
-document.querySelectorAll('.hamburger').forEach(b=>b.onclick=()=>openSidebar());
 </script>
-<script>if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));</script>
-
-<!-- MOBILE BOTTOM NAV -->
-<nav class="mobile-bottom-nav">
-  <div class="mbn-items">
-    <a href="dashboard.html"  class="mbn-item "><span class="mbn-icon">📊</span>Home</a>
-    <a href="students.html"   class="mbn-item "><span class="mbn-icon">🎓</span>Students</a>
-    <a href="attendance.html" class="mbn-item "><span class="mbn-icon">📋</span>Attend.</a>
-    <a href="finance.html"    class="mbn-item "><span class="mbn-icon">💰</span>Finance</a>
-    <a href="#" class="mbn-item signout-btn" onclick="signOut();return false;"><span class="mbn-icon">🚪</span>Sign Out</a>
-  </div>
-</nav>
-
 </body>
 </html>

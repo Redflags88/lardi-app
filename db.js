@@ -1,37 +1,39 @@
 // ── LARDI — DATABASE LAYER ──
-// All Firestore reads use single-field where() clauses at most.
-// Additional filtering is done in memory to avoid composite index requirements.
+// Rules:
+//   • getStudents() fetches ALL docs — no Firestore where() on multiple fields
+//   • No firebase.firestore.FieldValue — use new Date() for timestamps
+//   • No db.batch() — individual await doc.set() calls only
+//   • Every function in try/catch with console.error
 
-// ─────────────────────────────────────────
-// DASHBOARD
-// ─────────────────────────────────────────
+// ── DASHBOARD ──
 
 async function getDashboardStats() {
   const term = SCHOOL.term, year = SCHOOL.year, today = todayStr();
-  const safe = async (fn) => { try { return await fn(); } catch(e) { console.error('getDashboardStats:', e.message); return null; } };
-  const [studSnap, staffSnap, feeSnap, attSnap] = await Promise.all([
+  const safe = async fn => { try { return await fn(); } catch(e) { console.error('stat:', e.message); return null; } };
+  const [sSnap, stSnap, fSnap, aSnap] = await Promise.all([
     safe(() => db.collection('students').get()),
     safe(() => db.collection('staff').get()),
     safe(() => db.collection('fee_payments').where('term','==',term).get()),
     safe(() => db.collection('attendance').where('date','==',today).get()),
   ]);
-  const totalStudents = studSnap ? studSnap.size : 0;
-  const totalStaff    = staffSnap ? staffSnap.docs.filter(d => { const s=d.data().status; return !s||s==='active'; }).length : 0;
-  const feesCollected = feeSnap  ? feeSnap.docs.filter(d => d.data().year===year).reduce((s,d)=>s+(d.data().amount||0),0) : 0;
-  const absentToday   = attSnap  ? attSnap.docs.filter(d => d.data().status==='absent').length : 0;
-  return { totalStudents, totalStaff, feesCollected, absentToday };
+  return {
+    totalStudents: sSnap ? sSnap.size : 0,
+    totalStaff:    stSnap ? stSnap.docs.filter(d => { const s=d.data().status; return !s||s==='active'; }).length : 0,
+    feesCollected: fSnap  ? fSnap.docs.filter(d => d.data().year===year).reduce((s,d) => s+(d.data().amount||0), 0) : 0,
+    absentToday:   aSnap  ? aSnap.docs.filter(d => d.data().status==='absent').length : 0,
+  };
 }
 
-async function getAttTrend(days = 5) {
+async function getAttTrend(days=5) {
   try {
     const results = [];
     for (let i = days-1; i >= 0; i--) {
       const d = new Date(); d.setDate(d.getDate()-i);
       if (d.getDay()===0||d.getDay()===6) continue;
-      const dateStr = d.toISOString().split('T')[0];
-      const snap    = await db.collection('attendance').where('date','==',dateStr).get();
-      const present = snap.docs.filter(d=>d.data().status==='present').length;
-      results.push({ date:dateStr, label:d.toLocaleDateString('en-GH',{weekday:'short'}), pct: snap.size ? pct(present,snap.size) : 0 });
+      const ds   = d.toISOString().slice(0,10);
+      const snap = await db.collection('attendance').where('date','==',ds).get();
+      const pres = snap.docs.filter(d=>d.data().status==='present').length;
+      results.push({ date:ds, label:d.toLocaleDateString('en-GH',{weekday:'short'}), pct: snap.size ? pct(pres,snap.size):0 });
     }
     return results;
   } catch(e) { console.error('getAttTrend:', e.message); return []; }
@@ -39,64 +41,42 @@ async function getAttTrend(days = 5) {
 
 async function getFeeCollectionByClass(term, year) {
   try {
-    const [feeSnap, stuSnap] = await Promise.all([
+    const [fSnap, sSnap] = await Promise.all([
       db.collection('fee_payments').where('term','==',term).get(),
       db.collection('students').get(),
     ]);
-    const paid = {}, expected = {};
-    feeSnap.docs.forEach(d => {
-      const x = d.data();
-      if (x.year !== year) return;
-      paid[x.classKey] = (paid[x.classKey]||0) + (x.amount||0);
-    });
-    stuSnap.docs.forEach(d => {
-      const s = d.data();
-      if (s.status && s.status !== 'active') return;
-      const fee = s.classKey?.startsWith('jhs') ? 2400 : 2000;
-      expected[s.classKey] = (expected[s.classKey]||0) + fee;
-    });
-    return Object.keys(expected).map(cls => ({
-      classKey: cls, classLabel: getClassLabel(cls),
-      expected: expected[cls]||0, collected: paid[cls]||0,
-      rate: pct(paid[cls]||0, expected[cls]||1),
-    })).sort((a,b) => b.rate-a.rate);
+    const paid={}, exp={};
+    fSnap.docs.forEach(d => { const x=d.data(); if(x.year!==year)return; paid[x.classKey]=(paid[x.classKey]||0)+(x.amount||0); });
+    sSnap.docs.forEach(d => { const s=d.data(); if(s.status&&s.status!=='active')return; const fee=s.classKey?.startsWith('jhs')?2400:2000; exp[s.classKey]=(exp[s.classKey]||0)+fee; });
+    return Object.keys(exp).map(cls=>({ classKey:cls, classLabel:getClassLabel(cls), expected:exp[cls]||0, collected:paid[cls]||0, rate:pct(paid[cls]||0,exp[cls]||1) })).sort((a,b)=>b.rate-a.rate);
   } catch(e) { console.error('getFeeCollectionByClass:', e.message); return []; }
 }
 
 async function getRecentPayments(limitTo=8) {
   try {
     const snap = await db.collection('fee_payments').get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}))
-      .sort((a,b)=>(b.paidAt?.toMillis?.()??0)-(a.paidAt?.toMillis?.()??0))
-      .slice(0,limitTo);
+    return snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.paidAt?.toMillis?.()??0)-(a.paidAt?.toMillis?.()??0)).slice(0,limitTo);
   } catch(e) { console.error('getRecentPayments:', e.message); return []; }
 }
 
 async function getTopStudents(term, limitTo=5) {
   try {
     const snap = await db.collection('grade_summaries').where('term','==',term).get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}))
-      .sort((a,b)=>(b.avgScore||0)-(a.avgScore||0))
-      .slice(0,limitTo);
+    return snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.avgScore||0)-(a.avgScore||0)).slice(0,limitTo);
   } catch(e) { console.error('getTopStudents:', e.message); return []; }
 }
 
 async function getRecentAnnouncements(limitTo=3) {
   try {
     const snap = await db.collection('announcements').get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}))
-      .sort((a,b)=>(b.createdAt?.toMillis?.()??0)-(a.createdAt?.toMillis?.()??0))
-      .slice(0,limitTo);
+    return snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()??0)-(a.createdAt?.toMillis?.()??0)).slice(0,limitTo);
   } catch(e) { console.error('getRecentAnnouncements:', e.message); return []; }
 }
 
-// ─────────────────────────────────────────
-// STUDENTS
-// ─────────────────────────────────────────
+// ── STUDENTS ──
 
+// Fetches ALL documents — no Firestore where() on multiple fields, filters in memory
 async function getStudents({ classKey=null, search='' } = {}) {
-  // Fetches ALL documents from students collection — no Firestore where() clauses,
-  // no status filter. Works regardless of whether documents have a status field.
   try {
     const snap = await db.collection('students').get();
     let docs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
@@ -123,26 +103,22 @@ async function getStudentById(id) {
 }
 
 async function getStudentCount() {
-  try {
-    const snap = await db.collection('students').get();
-    return snap.size;
-  } catch(e) { return 0; }
+  try { return (await db.collection('students').get()).size; } catch(e) { return 0; }
 }
 
 async function addStudent({ firstName, lastName, dob, gender, classKey, parentName, parentPhone, parentEmail, address }) {
   try {
     const count     = await getStudentCount();
-    const year      = new Date().getFullYear();
-    const studentId = `GA-${year}-${String(count+1).padStart(4,'0')}`;
+    const studentId = `GA-${new Date().getFullYear()}-${String(count+1).padStart(4,'0')}`;
     await db.collection('students').doc(studentId).set({
       studentId, firstName, lastName,
-      dob: dob||'', gender: gender||'Male', classKey: classKey||'',
-      parentName: parentName||'', parentPhone: parentPhone||'',
-      parentEmail: parentEmail||'', address: address||'',
-      status: 'active', photoURL: '',
-      enrolledAt: new Date(), updatedAt: new Date(),
+      dob:dob||'', gender:gender||'Male', classKey:classKey||'',
+      parentName:parentName||'', parentPhone:parentPhone||'',
+      parentEmail:parentEmail||'', address:address||'',
+      status:'active', photoURL:'',
+      enrolledAt:new Date(), updatedAt:new Date(),
     });
-    return { success:true, id:studentId, studentId };
+    return { success:true, studentId };
   } catch(e) { console.error('addStudent:', e); return { success:false, error:e.message }; }
 }
 
@@ -150,20 +126,17 @@ async function updateStudent(id, data) {
   try {
     await db.collection('students').doc(id).update({ ...data, updatedAt:new Date() });
     return { success:true };
-  } catch(e) { return { success:false, error:e.message }; }
+  } catch(e) { console.error('updateStudent:', e); return { success:false, error:e.message }; }
 }
 
-// ─────────────────────────────────────────
-// STAFF
-// ─────────────────────────────────────────
+// ── STAFF ──
 
 async function getStaff({ status='active' } = {}) {
   try {
     const snap = await db.collection('staff').get();
-    let docs = snap.docs.map(d => ({ id:d.id, ...d.data() }));
-    if (status) docs = docs.filter(d => !d.status || d.status === status);
-    docs.sort((a,b) => (a.name||'').localeCompare(b.name||''));
-    return docs;
+    let docs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    if (status) docs = docs.filter(d => !d.status || d.status===status);
+    return docs.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
   } catch(e) { console.error('getStaff:', e); return []; }
 }
 
@@ -175,48 +148,37 @@ async function getStaffById(id) {
 }
 
 async function getStaffCount() {
-  try {
-    const snap = await db.collection('staff').get();
-    return snap.docs.filter(d => { const s=d.data().status; return !s||s==='active'; }).length;
-  } catch(e) { return 0; }
+  try { return (await db.collection('staff').get()).size; } catch(e) { return 0; }
 }
 
 async function addStaff({ name, role, department, subjects, phone, email, salary }) {
   try {
-    const count  = await getStaffCount();
-    const staffId = `ST-${String(count+1).padStart(3,'0')}`;
+    const staffId = `ST-${String((await getStaffCount())+1).padStart(3,'0')}`;
     const ref = await db.collection('staff').add({
-      staffId, name, role:role||'Teacher',
-      department:department||'', subjects:subjects||[],
-      phone:phone||'', email:email||'',
-      salary:parseFloat(salary)||0,
-      status:'active', photoURL:'',
+      staffId, name, role:role||'Teacher', department:department||'',
+      subjects:subjects||[], phone:phone||'', email:email||'',
+      salary:parseFloat(salary)||0, status:'active', photoURL:'',
       joinedAt:new Date(), updatedAt:new Date(),
     });
     return { success:true, id:ref.id, staffId };
-  } catch(e) { return { success:false, error:e.message }; }
+  } catch(e) { console.error('addStaff:', e); return { success:false, error:e.message }; }
 }
 
 async function updateStaff(id, data) {
   try {
     await db.collection('staff').doc(id).update({ ...data, updatedAt:new Date() });
     return { success:true };
-  } catch(e) { return { success:false, error:e.message }; }
+  } catch(e) { console.error('updateStaff:', e); return { success:false, error:e.message }; }
 }
 
-// ─────────────────────────────────────────
-// ATTENDANCE
-// ─────────────────────────────────────────
+// ── ATTENDANCE ──
 
 async function getAttendance(classKey, date) {
-  // Single where() on date; classKey filtered in memory.
   try {
+    // Single where() on date; classKey filtered in memory
     const snap = await db.collection('attendance').where('date','==',date).get();
     const map = {};
-    snap.docs.forEach(d => {
-      const x = d.data();
-      if (x.classKey === classKey) map[x.studentId] = { id:d.id, ...x };
-    });
+    snap.docs.forEach(d => { const x=d.data(); if(x.classKey===classKey) map[x.studentId]={id:d.id,...x}; });
     return map;
   } catch(e) { console.error('getAttendance:', e); return {}; }
 }
@@ -224,77 +186,50 @@ async function getAttendance(classKey, date) {
 async function getStudentAttendance(studentId) {
   try {
     const snap = await db.collection('attendance').where('studentId','==',studentId).get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}))
-      .sort((a,b)=>(b.date||'').localeCompare(a.date||''))
-      .slice(0,60);
+    return snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,60);
   } catch(e) { console.error('getStudentAttendance:', e.message); return []; }
 }
 
 async function saveAttendance(records, classKey, date, markedBy) {
   try {
-    const batch = db.batch();
     for (const rec of records) {
-      const ref = db.collection('attendance').doc(`${rec.studentId}_${date}`);
-      batch.set(ref, {
+      await db.collection('attendance').doc(`${rec.studentId}_${date}`).set({
         studentId:rec.studentId, studentName:rec.studentName,
-        classKey, date, status:rec.status,
-        note:rec.note||'', markedBy, createdAt:new Date(),
+        classKey, date, status:rec.status, note:rec.note||'', markedBy, createdAt:new Date(),
       }, { merge:true });
     }
-    await batch.commit();
     return { success:true, count:records.length };
   } catch(e) { console.error('saveAttendance:', e); return { success:false, error:e.message }; }
 }
 
-async function getClassAttendanceSummary(classKey) {
-  try {
-    const snap = await db.collection('attendance').where('classKey','==',classKey).get();
-    const docs = snap.docs.map(d=>d.data());
-    const present = docs.filter(d=>d.status==='present').length;
-    const absent  = docs.filter(d=>d.status==='absent').length;
-    const late    = docs.filter(d=>d.status==='late').length;
-    return { total:docs.length, present, absent, late, rate:pct(present,docs.length||1) };
-  } catch(e) { return { total:0, present:0, absent:0, late:0, rate:0 }; }
-}
-
-// ─────────────────────────────────────────
-// GRADES
-// ─────────────────────────────────────────
+// ── GRADES ──
 
 async function getClassGrades(classKey, term, year) {
   try {
     const snap = await db.collection('grades').where('classKey','==',classKey).get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}))
-      .filter(d => d.term===term && d.year===year);
+    return snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>d.term===term&&d.year===year);
   } catch(e) { console.error('getClassGrades:', e); return []; }
 }
 
 async function getStudentGrades(studentId, term, year) {
   try {
     const snap = await db.collection('grades').where('studentId','==',studentId).get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}))
-      .filter(d => d.term===term && d.year===year)
-      .sort((a,b)=>(a.subjectKey||'').localeCompare(b.subjectKey||''));
+    return snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>d.term===term&&d.year===year).sort((a,b)=>(a.subjectKey||'').localeCompare(b.subjectKey||''));
   } catch(e) { console.error('getStudentGrades:', e.message); return []; }
 }
 
 async function saveGrades(entries, term, year, enteredBy) {
   try {
-    const batch = db.batch();
     for (const e of entries) {
-      const g   = getGrade(e.score);
-      const ref = db.collection('grades').doc(`${e.studentId}_${e.subjectKey}_${term}_${year}`);
-      batch.set(ref, {
-        studentId:e.studentId, studentName:e.studentName,
-        classKey:e.classKey, subjectKey:e.subjectKey,
-        term, year, score:parseFloat(e.score)||0,
-        grade:g.grade, remark:g.remark,
-        enteredBy, updatedAt:new Date(),
+      const g = getGrade(e.score);
+      await db.collection('grades').doc(`${e.studentId}_${e.subjectKey}_${term}_${year}`).set({
+        studentId:e.studentId, studentName:e.studentName, classKey:e.classKey,
+        subjectKey:e.subjectKey, term, year, score:parseFloat(e.score)||0,
+        grade:g.grade, remark:g.remark, enteredBy, updatedAt:new Date(),
       }, { merge:true });
     }
-    await batch.commit();
     const ids = [...new Set(entries.map(e=>e.studentId))];
-    await Promise.all(ids.map(id => rebuildGradeSummary(id,term,year)));
+    for (const id of ids) await rebuildGradeSummary(id, term, year);
     return { success:true };
   } catch(e) { console.error('saveGrades:', e); return { success:false, error:e.message }; }
 }
@@ -302,33 +237,19 @@ async function saveGrades(entries, term, year, enteredBy) {
 async function rebuildGradeSummary(studentId, term, year) {
   try {
     const snap   = await db.collection('grades').where('studentId','==',studentId).get();
-    const grades = snap.docs.map(d=>d.data()).filter(d=>d.term===term && d.year===year);
+    const grades = snap.docs.map(d=>d.data()).filter(d=>d.term===term&&d.year===year);
     if (!grades.length) return;
-    const avg     = grades.reduce((s,g)=>s+(g.score||0),0) / grades.length;
-    const student = await getStudentById(studentId);
+    const avg = grades.reduce((s,g)=>s+(g.score||0),0)/grades.length;
+    const stu = await getStudentById(studentId);
     await db.collection('grade_summaries').doc(`${studentId}_${term}_${year}`).set({
-      studentId,
-      studentName: student ? `${student.firstName} ${student.lastName}` : '',
-      classKey:    student ? student.classKey : '',
-      term, year,
-      avgScore:     parseFloat(avg.toFixed(1)),
-      subjectCount: grades.length,
-      updatedAt:    new Date(),
+      studentId, studentName:stu?`${stu.firstName} ${stu.lastName}`:'',
+      classKey:stu?.classKey||'', term, year,
+      avgScore:parseFloat(avg.toFixed(1)), subjectCount:grades.length, updatedAt:new Date(),
     }, { merge:true });
   } catch(e) { console.error('rebuildGradeSummary:', e); }
 }
 
-// ─────────────────────────────────────────
-// FINANCE
-// ─────────────────────────────────────────
-
-async function getFeeStructure(classKey, term, year) {
-  try {
-    const doc = await db.collection('fee_structure').doc(`${classKey}_${term}_${year}`).get();
-    if (doc.exists) return { id:doc.id, ...doc.data() };
-    return { amount: classKey?.startsWith('jhs') ? 2400 : 2000 };
-  } catch(e) { return { amount:2000 }; }
-}
+// ── FINANCE ──
 
 async function getStudentPayments(studentId, term, year) {
   try {
@@ -343,10 +264,7 @@ async function getStudentPayments(studentId, term, year) {
 async function getPaymentsByTerm(term, year, limitTo=50) {
   try {
     const snap = await db.collection('fee_payments').where('term','==',term).get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}))
-      .filter(d=>d.year===year)
-      .sort((a,b)=>(b.paidAt?.toMillis?.()??0)-(a.paidAt?.toMillis?.()??0))
-      .slice(0,limitTo);
+    return snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>d.year===year).sort((a,b)=>(b.paidAt?.toMillis?.()??0)-(a.paidAt?.toMillis?.()??0)).slice(0,limitTo);
   } catch(e) { console.error('getPaymentsByTerm:', e.message); return []; }
 }
 
@@ -355,55 +273,33 @@ async function recordPayment({ studentId, studentName, classKey, term, year, amo
     const ref = await db.collection('fee_payments').add({
       studentId, studentName, classKey, term, year,
       amount:parseFloat(amount), method:method||'Cash',
-      reference:reference||'', notes:notes||'',
-      recordedBy, paidAt:new Date(),
+      reference:reference||'', notes:notes||'', recordedBy, paidAt:new Date(),
     });
     return { success:true, id:ref.id };
-  } catch(e) { return { success:false, error:e.message }; }
+  } catch(e) { console.error('recordPayment:', e); return { success:false, error:e.message }; }
 }
 
 async function getOutstanding(term, year, limitTo=50) {
   try {
-    const [studSnap, feeSnap] = await Promise.all([
+    const [sSnap, fSnap] = await Promise.all([
       db.collection('students').get(),
       db.collection('fee_payments').where('term','==',term).get(),
     ]);
-    const paid = {};
-    feeSnap.docs.forEach(d => {
-      const x = d.data();
-      if (x.year!==year) return;
-      paid[x.studentId] = (paid[x.studentId]||0) + (x.amount||0);
-    });
-    const outstanding = [];
-    studSnap.docs.forEach(doc => {
-      const s = { id:doc.id, ...doc.data() };
-      if (s.status && s.status!=='active') return;
-      const expected = s.classKey?.startsWith('jhs') ? 2400 : 2000;
-      const paidAmt  = paid[s.studentId] || paid[doc.id] || 0;
-      const balance  = expected - paidAmt;
-      if (balance>0) outstanding.push({ ...s, expected, paidAmt, balance });
-    });
-    return outstanding.sort((a,b)=>b.balance-a.balance).slice(0,limitTo);
+    const paid={};
+    fSnap.docs.forEach(d=>{ const x=d.data(); if(x.year!==year)return; paid[x.studentId]=(paid[x.studentId]||0)+(x.amount||0); });
+    const out=[];
+    sSnap.docs.forEach(doc=>{ const s={id:doc.id,...doc.data()}; if(s.status&&s.status!=='active')return; const exp=s.classKey?.startsWith('jhs')?2400:2000; const p=paid[s.studentId]||paid[doc.id]||0; const bal=exp-p; if(bal>0)out.push({...s,expected:exp,paidAmt:p,balance:bal}); });
+    return out.sort((a,b)=>b.balance-a.balance).slice(0,limitTo);
   } catch(e) { console.error('getOutstanding:', e); return []; }
 }
 
-// ─────────────────────────────────────────
-// LIBRARY
-// ─────────────────────────────────────────
+// ── LIBRARY ──
 
 async function getBooks({ search='' } = {}) {
   try {
     const snap = await db.collection('books').get();
-    let docs = snap.docs.map(d=>({id:d.id,...d.data()}))
-      .sort((a,b)=>(a.title||'').localeCompare(b.title||''));
-    if (search) {
-      const q = search.toLowerCase();
-      docs = docs.filter(d =>
-        (d.title||'').toLowerCase().includes(q) ||
-        (d.author||'').toLowerCase().includes(q) ||
-        (d.isbn||'').includes(q)
-      );
-    }
+    let docs = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.title||'').localeCompare(b.title||''));
+    if (search) { const q=search.toLowerCase(); docs=docs.filter(d=>(d.title||'').toLowerCase().includes(q)||(d.author||'').toLowerCase().includes(q)||(d.isbn||'').includes(q)); }
     return docs;
   } catch(e) { console.error('getBooks:', e.message); return []; }
 }
@@ -411,21 +307,15 @@ async function getBooks({ search='' } = {}) {
 async function addBook({ title, author, isbn, category, totalCopies }) {
   try {
     const copies = parseInt(totalCopies)||1;
-    const ref = await db.collection('books').add({
-      title, author:author||'', isbn:isbn||'',
-      category:category||'Textbook',
-      totalCopies:copies, availableCopies:copies,
-      createdAt:new Date(),
-    });
+    const ref = await db.collection('books').add({ title, author:author||'', isbn:isbn||'', category:category||'Textbook', totalCopies:copies, availableCopies:copies, createdAt:new Date() });
     return { success:true, id:ref.id };
-  } catch(e) { return { success:false, error:e.message }; }
+  } catch(e) { console.error('addBook:', e); return { success:false, error:e.message }; }
 }
 
 async function getBorrowedBooks() {
   try {
     const snap = await db.collection('book_borrows').where('status','==','borrowed').get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}))
-      .sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));
+    return snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.dueDate||'').localeCompare(b.dueDate||''));
   } catch(e) { console.error('getBorrowedBooks:', e.message); return []; }
 }
 
@@ -433,20 +323,12 @@ async function issueBook({ bookId, studentId, studentName, dueDate, issuedBy }) 
   try {
     const bookRef = db.collection('books').doc(bookId);
     const book    = await bookRef.get();
-    if (!book.exists || book.data().availableCopies < 1)
-      return { success:false, error:'Book not available.' };
+    if (!book.exists || book.data().availableCopies < 1) return { success:false, error:'Book not available.' };
     const avail = book.data().availableCopies;
-    const [ref] = await Promise.all([
-      db.collection('book_borrows').add({
-        bookId, bookTitle:book.data().title,
-        studentId, studentName,
-        issuedAt:new Date(), dueDate, issuedBy,
-        status:'borrowed', returnedAt:null,
-      }),
-      bookRef.update({ availableCopies: avail-1 }),
-    ]);
+    const ref = await db.collection('book_borrows').add({ bookId, bookTitle:book.data().title, studentId, studentName, issuedAt:new Date(), dueDate, issuedBy, status:'borrowed', returnedAt:null });
+    await bookRef.update({ availableCopies:avail-1 });
     return { success:true, id:ref.id };
-  } catch(e) { return { success:false, error:e.message }; }
+  } catch(e) { console.error('issueBook:', e); return { success:false, error:e.message }; }
 }
 
 async function returnBook(borrowId, bookId) {
@@ -454,76 +336,40 @@ async function returnBook(borrowId, bookId) {
     const bookRef = db.collection('books').doc(bookId);
     const book    = await bookRef.get();
     const avail   = book.exists ? (book.data().availableCopies||0) : 0;
-    const batch   = db.batch();
-    batch.update(db.collection('book_borrows').doc(borrowId), { status:'returned', returnedAt:new Date() });
-    batch.update(bookRef, { availableCopies: avail+1 });
-    await batch.commit();
+    await db.collection('book_borrows').doc(borrowId).update({ status:'returned', returnedAt:new Date() });
+    await bookRef.update({ availableCopies:avail+1 });
     return { success:true };
-  } catch(e) { return { success:false, error:e.message }; }
+  } catch(e) { console.error('returnBook:', e); return { success:false, error:e.message }; }
 }
 
-// ─────────────────────────────────────────
-// ANNOUNCEMENTS
-// ─────────────────────────────────────────
+// ── ANNOUNCEMENTS ──
 
 async function getAnnouncements(limitTo=20) {
   try {
     const snap = await db.collection('announcements').get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}))
-      .sort((a,b)=>(b.createdAt?.toMillis?.()??0)-(a.createdAt?.toMillis?.()??0))
-      .slice(0,limitTo);
+    return snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.toMillis?.()??0)-(a.createdAt?.toMillis?.()??0)).slice(0,limitTo);
   } catch(e) { console.error('getAnnouncements:', e.message); return []; }
 }
 
 async function addAnnouncement({ title, body, audience, classKey, priority, channel, createdBy }) {
   try {
-    const ref = await db.collection('announcements').add({
-      title, body,
-      audience:audience||'everyone',
-      classKey:classKey||null,
-      priority:priority||'normal',
-      channel:channel||'in-app',
-      createdBy, createdAt:new Date(),
-    });
+    const ref = await db.collection('announcements').add({ title, body, audience:audience||'everyone', classKey:classKey||null, priority:priority||'normal', channel:channel||'in-app', createdBy, createdAt:new Date() });
     return { success:true, id:ref.id };
-  } catch(e) { return { success:false, error:e.message }; }
+  } catch(e) { console.error('addAnnouncement:', e); return { success:false, error:e.message }; }
 }
 
-// ─────────────────────────────────────────
-// TIMETABLE
-// ─────────────────────────────────────────
+// ── TIMETABLE ──
 
 async function getTimetable(classKey, term, year) {
   try {
     const snap = await db.collection('timetable').where('classKey','==',classKey).get();
-    return snap.docs.map(d=>({id:d.id,...d.data()}))
-      .filter(d => !d.term || (d.term===term && (!d.year||d.year===year)));
+    return snap.docs.map(d=>({id:d.id,...d.data()})).filter(d=>!d.term||(d.term===term&&(!d.year||d.year===year)));
   } catch(e) { console.error('getTimetable:', e.message); return []; }
 }
 
 async function saveTimetableSlot({ classKey, subjectKey, staffId, staffName, day, startTime, endTime, term, year }) {
   try {
-    const docId = `${classKey}_${day}_${startTime}_${term}_${year}`;
-    await db.collection('timetable').doc(docId).set({
-      classKey, subjectKey, staffId:staffId||'',
-      staffName:staffName||'', day, startTime, endTime, term, year,
-      updatedAt:new Date(),
-    }, { merge:true });
+    await db.collection('timetable').doc(`${classKey}_${day}_${startTime}_${term}_${year}`).set({ classKey, subjectKey, staffId:staffId||'', staffName:staffName||'', day, startTime, endTime, term, year, updatedAt:new Date() }, { merge:true });
     return { success:true };
-  } catch(e) { return { success:false, error:e.message }; }
-}
-
-// ─────────────────────────────────────────
-// DEMO RESET
-// ─────────────────────────────────────────
-
-async function getDemoStatus() {
-  try {
-    const [s,p,a] = await Promise.all([
-      db.collection('students').get(),
-      db.collection('fee_payments').get(),
-      db.collection('attendance').get(),
-    ]);
-    return { students:s.size, payments:p.size, attendance:a.size };
-  } catch(e) { return { students:0, payments:0, attendance:0 }; }
+  } catch(e) { console.error('saveTimetableSlot:', e); return { success:false, error:e.message }; }
 }

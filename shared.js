@@ -1,21 +1,21 @@
-// ── LARDI SCHOOL MANAGEMENT SYSTEM ──
-// Shared constants, helpers and school settings loader
-// Leone Digital Africa Limited · lardigh.com
+// ── LARDI — SHARED CONSTANTS, HELPERS & SETTINGS ──
 
-// ─────────────────────────────────────────
-// SCHOOL DEFAULTS — initialised from school.config.js; overridden at runtime by Firestore
-// ─────────────────────────────────────────
-const SCHOOL = {
-  name:  SCHOOL_CONFIG.name,
-  city:  SCHOOL_CONFIG.city,
-  phone: SCHOOL_CONFIG.phone,
-  email: SCHOOL_CONFIG.email,
-  term:  SCHOOL_CONFIG.term,
-  year:  SCHOOL_CONFIG.year,
-  color: SCHOOL_CONFIG.color,
+// Feature flags — set profilePhotos:true when Firebase Storage is configured
+const FEATURES = {
+  profilePhotos: false,
 };
 
-// Load school settings from Firestore — never throws
+// ── SCHOOL DEFAULTS — overridden by Firestore settings/school document ──
+const SCHOOL = {
+  name:  'Your School',
+  city:  'Accra, Ghana',
+  phone: '',
+  email: '',
+  term:  'Term 1',
+  year:  '2025–2026',
+  color: '#1a6b3c',
+};
+
 async function loadSchoolSettings() {
   try {
     if (typeof db === 'undefined') return;
@@ -29,30 +29,12 @@ async function loadSchoolSettings() {
       if (d.term)  SCHOOL.term  = d.term;
       if (d.year)  SCHOOL.year  = d.year;
     }
-  } catch(e) {
-    console.warn('School settings not found, using defaults.');
+  } catch (e) {
+    console.warn('loadSchoolSettings:', e.message);
   }
 }
 
-// ─────────────────────────────────────────
-// SUBJECTS
-// ─────────────────────────────────────────
-const SUBJECTS = [
-  { key: 'maths',    label: 'Mathematics',       icon: '🔢' },
-  { key: 'english',  label: 'English Language',  icon: '📖' },
-  { key: 'science',  label: 'Integrated Science',icon: '🔬' },
-  { key: 'social',   label: 'Social Studies',    icon: '🌍' },
-  { key: 'ict',      label: 'ICT',               icon: '💻' },
-  { key: 'rme',      label: 'RME',               icon: '✝️'  },
-  { key: 'history',  label: 'History',           icon: '📜' },
-  { key: 'french',   label: 'French',            icon: '🇫🇷' },
-  { key: 'ghanalang',label: 'Ghanaian Language', icon: '🇬🇭' },
-  { key: 'bdt',      label: 'BDT / Creative Arts',icon:'🎨' },
-];
-
-// ─────────────────────────────────────────
-// CLASSES
-// ─────────────────────────────────────────
+// ── CLASSES ──
 const CLASSES = [
   { key:'primary-1a', label:'Primary 1A', level:'Primary', order:1  },
   { key:'primary-1b', label:'Primary 1B', level:'Primary', order:2  },
@@ -74,22 +56,39 @@ const CLASSES = [
   { key:'jhs-3b',     label:'JHS 3B',     level:'JHS',     order:18 },
 ];
 
-// ─────────────────────────────────────────
-// GRADE SCALE
-// ─────────────────────────────────────────
-const GRADE_SCALE = [
-  { min:90, grade:'A+', remark:'Excellent'      },
-  { min:80, grade:'A',  remark:'Very Good'       },
-  { min:70, grade:'B+', remark:'Good'            },
-  { min:60, grade:'B',  remark:'Above Average'   },
-  { min:50, grade:'C',  remark:'Average'         },
-  { min:40, grade:'D',  remark:'Below Average'   },
-  { min:0,  grade:'F',  remark:'Failing'         },
+// ── SUBJECTS ──
+const SUBJECTS = [
+  { key:'maths',     label:'Mathematics',        icon:'🔢' },
+  { key:'english',   label:'English Language',   icon:'📖' },
+  { key:'science',   label:'Integrated Science', icon:'🔬' },
+  { key:'social',    label:'Social Studies',      icon:'🌍' },
+  { key:'ict',       label:'ICT',                icon:'💻' },
+  { key:'rme',       label:'RME',                icon:'✝️'  },
+  { key:'history',   label:'History',            icon:'📜' },
+  { key:'french',    label:'French',             icon:'🇫🇷' },
+  { key:'ghanalang', label:'Ghanaian Language',  icon:'🇬🇭' },
+  { key:'bdt',       label:'BDT / Creative Arts',icon:'🎨' },
 ];
 
-// ─────────────────────────────────────────
-// HELPERS
-// ─────────────────────────────────────────
+// ── GRADE SCALE ──
+const GRADE_SCALE = [
+  { min:90, grade:'A+', remark:'Excellent',     color:'#059669' },
+  { min:80, grade:'A',  remark:'Very Good',      color:'#10b981' },
+  { min:70, grade:'B+', remark:'Good',           color:'#2d9b5a' },
+  { min:60, grade:'B',  remark:'Above Average',  color:'#1a6b3c' },
+  { min:50, grade:'C',  remark:'Average',        color:'#c8922a' },
+  { min:40, grade:'D',  remark:'Below Average',  color:'#d97706' },
+  { min:0,  grade:'F',  remark:'Failing',        color:'#dc2626' },
+];
+
+// ── STAFF ──
+const DEPARTMENTS = ['Administration','Primary','JHS','Support'];
+const STAFF_ROLES  = ['Head Teacher','Assistant Head Teacher','Teacher','Bursar','Librarian','Counsellor','Support Staff'];
+
+// ── LIBRARY ──
+const BOOK_CATS = ['Textbook','Literature','Science','Mathematics','Language','Social Studies','History','Reference','Story Book','Other'];
+
+// ── HELPERS ──
 function getClassLabel(key) {
   return CLASSES.find(c => c.key === key)?.label || key || '—';
 }
@@ -100,42 +99,66 @@ function getSubjectIcon(key) {
   return SUBJECTS.find(s => s.key === key)?.icon || '📚';
 }
 function getGrade(score) {
-  return GRADE_SCALE.find(g => score >= g.min) || GRADE_SCALE[GRADE_SCALE.length-1];
+  return GRADE_SCALE.find(g => score >= g.min) || GRADE_SCALE[GRADE_SCALE.length - 1];
 }
 function getInitials(name) {
   if (!name) return '?';
-  return name.trim().split(/\s+/).map(w => w[0]?.toUpperCase()).filter(Boolean).slice(0,2).join('');
+  return name.trim().split(/\s+/).map(w => w[0]?.toUpperCase()).filter(Boolean).slice(0, 2).join('');
 }
 function fmtGHS(amount) {
-  if (!amount && amount !== 0) return '—';
-  return 'GHS ' + Number(amount).toLocaleString('en-GH', { minimumFractionDigits:0, maximumFractionDigits:0 });
+  if (amount === null || amount === undefined) return '—';
+  return 'GHS ' + Number(amount).toLocaleString('en-GH', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 function pct(a, b) {
   if (!b) return 0;
   return Math.round((a / b) * 100);
 }
 function todayStr() {
-  return new Date().toISOString().slice(0,10);
+  return new Date().toISOString().slice(0, 10);
 }
 function formatDate(ts) {
   if (!ts) return '—';
   const d = ts?.toDate ? ts.toDate() : new Date(ts);
   return d.toLocaleDateString('en-GH', { day:'numeric', month:'short', year:'numeric' });
 }
+
+// Avatar — respects FEATURES.profilePhotos flag
+function avatarHtml(name, photoURL, extraClass = '') {
+  if (FEATURES.profilePhotos && photoURL) {
+    return `<img src="${photoURL}" class="av ${extraClass}" style="object-fit:cover;border-radius:50%" alt="${name}">`;
+  }
+  return `<div class="av av-green ${extraClass}">${getInitials(name)}</div>`;
+}
+
 function showToast(msg, type) {
   const t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;
-  t.style.background = type === 'err' ? 'var(--red)' : 'var(--green)';
+  t.className   = 'toast ' + (type === 'err' ? 'toast-err' : 'toast-ok');
   t.style.display = 'block';
   setTimeout(() => { t.style.display = 'none'; }, 2800);
 }
 
-// Apply school logo from school.config.js to every img on this page
-(function() {
-  document.querySelectorAll('img').forEach(function(img) {
-    if (img.getAttribute('src') && img.getAttribute('src').includes('lardi-mark')) {
-      img.src = SCHOOL_CONFIG.logoPath;
-    }
-  });
-})();
+// Populate sidebar with profile info and school name/term
+function initSidebar(profile) {
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('sb-av',   getInitials(profile.name));
+  set('sb-name', profile.name || profile.email);
+  set('sb-role', profile.role);
+  set('sb-school', SCHOOL.name);
+  set('sb-term',   `${SCHOOL.term} · ${SCHOOL.year}`);
+  const badge = document.getElementById('term-badge');
+  if (badge) badge.textContent = `${SCHOOL.term} · ${SCHOOL.year}`;
+  if (profile.role !== 'admin') {
+    document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+  }
+}
+
+function openSidebar()  {
+  document.getElementById('sidebar')?.classList.add('open');
+  document.getElementById('sidebar-overlay')?.classList.add('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar')?.classList.remove('open');
+  document.getElementById('sidebar-overlay')?.classList.remove('open');
+}

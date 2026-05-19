@@ -2,7 +2,7 @@
 // Service Worker v1
 // Leone Digital Africa Limited · lardigh.com
 
-const CACHE = 'lardi-v3';
+const CACHE = 'lardi-v4';
 
 const STATIC = [
   '/', '/index.html',
@@ -47,7 +47,10 @@ self.addEventListener('fetch', e => {
   if (isHTML) {
     e.respondWith(
       fetch(req).then(res => {
-        if (res && res.status === 200) caches.open(CACHE).then(c => c.put(req, res.clone()));
+        if (res && res.status === 200) {
+          const resClone = res.clone();
+          caches.open(CACHE).then(c => c.put(req, resClone));
+        }
         return res;
       }).catch(() => caches.match(req))
     );
@@ -55,8 +58,10 @@ self.addEventListener('fetch', e => {
     e.respondWith(
       caches.match(req).then(cached => {
         const fresh = fetch(req).then(res => {
-          if (res && res.status === 200 && res.type === 'basic')
-            caches.open(CACHE).then(c => c.put(req, res.clone()));
+          if (res && res.status === 200 && res.type === 'basic') {
+            const resClone = res.clone();
+            caches.open(CACHE).then(c => c.put(req, resClone));
+          }
           return res;
         });
         return cached || fresh;

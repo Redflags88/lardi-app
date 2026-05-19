@@ -157,7 +157,7 @@
     </div>
     <div class="field">
       <label>Class *</label>
-      <select id="f-cls"><option value="">Select class…</option></select>
+      <select id="student-class"><option value="">Select class…</option></select>
     </div>
     <div class="field"><label>Parent / Guardian Name</label><input type="text" id="f-par" placeholder="e.g. Mr. Kofi Asante"></div>
     <div class="form-row-2">
@@ -218,10 +218,25 @@ let TERM = '', YEAR = '';
       });
     }
 
-    // Class dropdown for Add Student modal — populated from CLASSES array
-    document.getElementById('f-cls').innerHTML =
-      '<option value="">Select class…</option>' +
-      CLASSES.map(c => `<option value="${c.key}">${c.label}</option>`).join('');
+    // Class dropdown for Add Student modal — optgroups by level from CLASSES array
+    const sel = document.getElementById('student-class');
+    sel.innerHTML = '<option value="">Select class…</option>';
+    const groups = {};
+    CLASSES.forEach(c => {
+      if (!groups[c.level]) groups[c.level] = [];
+      groups[c.level].push(c);
+    });
+    Object.entries(groups).forEach(([level, classes]) => {
+      const og = document.createElement('optgroup');
+      og.label = level;
+      classes.forEach(c => {
+        const op = document.createElement('option');
+        op.value = c.key;
+        op.textContent = c.label;
+        og.appendChild(op);
+      });
+      sel.appendChild(og);
+    });
 
     // Class filter + pills — populated from CLASSES array
     document.getElementById('cls-filter').innerHTML =
@@ -369,7 +384,7 @@ function closeAdd() {
 async function doAdd() {
   const first = document.getElementById('f-first').value.trim();
   const last  = document.getElementById('f-last').value.trim();
-  const cls   = document.getElementById('f-cls').value;
+  const cls   = document.getElementById('student-class').value;
   const err   = document.getElementById('add-err');
   err.className = 'form-err';
 
